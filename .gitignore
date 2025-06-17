@@ -1,0 +1,99 @@
+# Model files and directories
+models/
+*.bin
+*.vec
+*.ftz
+*.model
+
+# FastText related
+fastText/
+wiki.*
+cc.*
+crawl.*
+
+# Build and compilation artifacts
+*.o
+*.out
+*.exe
+*.dll
+*.so
+*.dylib
+build/
+dist/
+*.pyc
+__pycache__/
+.pytest_cache/
+*.egg-info/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+*.sublime-workspace
+*.sublime-project
+
+# Temporary and cache files
+tmp/
+temp/
+cache/
+.cache/
+
+# Log files
+*.log
+logs/
+log/
+
+# Environment and configuration
+.env
+.env.*
+config.local.json
+*.local.conf
+
+# Dependency directories
+node_modules/
+vendor/
+venv/
+env/
+.virtualenv/
+
+# Testing and coverage
+coverage/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation build
+docs/_build/
+site/
+
+# Sensitive or private information
+*_private.*
+*_secret.*
+secrets/
+private/
+credentials/
+*.pem
+*.key
+*.crt
+
+# Large datasets
+data/
+datasets/
+*.csv
+*.json
+*.txt
+!requirements.txt
+!CMakeLists.txt
+!README*.txt
+
+# Backup files
+*.bak
+*.backup
+*~
+*.old
+
+# System files
+.DS_Store
+Thumbs.db 
