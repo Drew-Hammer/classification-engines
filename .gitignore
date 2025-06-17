@@ -25,6 +25,12 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 
+# Binary executables
+src/classifier
+src/test_classifier
+classifier
+test_classifier
+
 # IDE and editor files
 .vscode/
 .idea/
