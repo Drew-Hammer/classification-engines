@@ -2,7 +2,6 @@
 add_executable(classifier
     main.cpp
     Classifier.cpp
-    SecurityMappings.hpp
 )
 
 # Add include directories for the classifier
