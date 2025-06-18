@@ -34,42 +34,38 @@
 #include <iostream>
 
 void checkSecuritySeverity(const std::string& text) {
-    // Configure model directory (do this once at startup)
-    // Option 1: Set a custom path
-    setModelDirectory("/path/to/your/models");
-    // Option 2: Use default "models" directory in current path
-    setModelDirectory("models");
+    // Set the model directory (do this once at startup)
+    setModelDirectory("models");  // Use relative or absolute path
     
     // Classify text
     double severity = classifyText(text);
     
     if (severity >= 0.8) {
         std::cout << "HIGH security concern (" << (severity * 100) << "%)\n";
-        // Handle high-severity case
     } else if (severity >= 0.6) {
         std::cout << "MEDIUM security concern (" << (severity * 100) << "%)\n";
-        // Handle medium-severity case
-    } else {
+    } else if (severity > 0.0) {
         std::cout << "LOW security concern (" << (severity * 100) << "%)\n";
-        // Handle low-severity case
+    } else {
+        std::cout << "Classification failed or unknown term\n";
     }
 }
 ```
 
 ### Important Notes
-- The function `classifyText()` returns a double between 0.0 and 1.0
-- Severity levels:
-  * HIGH: ≥ 0.8 (80%)
-  * MEDIUM: 0.6-0.79 (60-79%)
-  * LOW: < 0.6 (below 60%)
+- The function `classifyText()` returns a double between -1.0 and 1.0
+  * -1.0: Model loading failed or error occurred
+  * 0.0: Term not recognized or very low confidence
+  * 0.0-1.0: Confidence/severity score
 - Model Path Configuration:
   * Use `setModelDirectory()` to set the path to your model files
-  * Default is "models" in the current directory if not set
   * Path can be relative or absolute
   * No trailing slash needed (e.g., "models" not "models/")
-- The classifier is initialized only once (uses static initialization)
-- Handles camelCase and compound words automatically
-- Thread-safe for classification but not for initialization
+- Features:
+  * Handles camelCase words automatically (e.g., "hasSsh" → "has ssh")
+  * Processes compound words
+  * Case-insensitive matching
+  * Thread-safe for classification (after initialization)
 
 ### Model Requirements
 - Requires either `security_model.bin` or `wiki.en.bin` in your models directory
@@ -94,69 +90,77 @@ Note: The model directory should contain either `security_model.bin` or `wiki.en
 
 ---
 
-## Command-Line Usage
+## Command-Line Testing
 
-## Quick Start
-1. Compile the classifier:
+### Quick Start
+1. Compile the test program:
 ```bash
-g++ -std=c++17 test_classifier.cpp Classifier.cpp TextProcessor.cpp -o test_classifier
+g++ -std=c++17 src/test_engine.cpp src/classification_engine.cpp src/Classifier.cpp src/TextProcessor.cpp -o test_engine
 ```
 
-2. Run the classifier with a security term or phrase:
+2. Run the test program:
 ```bash
-./test_classifier "your security term here"
+./test_engine
 ```
 
-## Example Usage
-```bash
-# Test a high-severity term
-./test_classifier "zero-day vulnerability"     # HIGH severity (90%)
-./test_classifier "ransomware attack"         # HIGH severity (85%)
-./test_classifier "data breach"               # HIGH severity (80%)
+The test program includes various test cases to demonstrate the classifier's capabilities.
 
-# Test a medium-severity term
-./test_classifier "firewall"                  # MEDIUM severity (70%)
-./test_classifier "access control"            # MEDIUM severity (75%)
-./test_classifier "data encryption"           # MEDIUM severity (70%)
+### Example Classifications
+- High Severity Terms (≥80%):
+  * "zero-day vulnerability"
+  * "ransomware attack"
+  * "SQL injection"
+  * "malware detected"
+  
+- Medium Severity Terms (60-79%):
+  * "firewall configuration"
+  * "access control"
+  * "network security"
+  * "password expired"
+  
+- Low Severity Terms (<60%):
+  * "security policy"
+  * "compliance report"
+  * "documentation update"
 
-# Test a low-severity term
-./test_classifier "security standard"         # LOW severity (50%)
-./test_classifier "compliance policy"         # LOW severity (50%)
-./test_classifier "audit report"              # LOW severity (50%)
-```
+### Understanding Results
+The classifier shows:
+- Input text (with any preprocessing applied)
+- Classification confidence (0-100%)
+- Severity level (HIGH/MEDIUM/LOW)
+- Similar terms found (if any)
 
-## Understanding Results
-The classifier will show:
-- Category: The security category the term belongs to
-- Confidence: How confident the classification is (0-100%)
-- Severity: How severe the security term is (LOW/MEDIUM/HIGH)
-- Similar Terms: Other related security terms (if found)
-
-## Severity Levels
-- HIGH (≥80%): Critical security concerns (vulnerabilities, attacks)
-- MEDIUM (60-79%): Important but not critical (firewalls, access control)
-- LOW (<60%): Policy and compliance related terms
-
-## Tips
+### Tips
 - Use quotes around multi-word phrases
-- Try different variations of terms (e.g., "malware" vs "malicious software")
-- The classifier handles common security abbreviations (e.g., "DDoS", "2FA")
-- Terms can match multiple categories with different severities
-- Unknown terms will return "Unknown" category with 0% confidence
+- The classifier handles:
+  * CamelCase words (e.g., "hasSsh")
+  * Common abbreviations (e.g., "2FA", "CSRF")
+  * Compound words
+  * Case variations
+- Unknown terms return a score of 0.0
+- Model loading failures return -1.0
 
-## Common Categories
-1. Vulnerability - Security weaknesses and exploits
-2. Attack - Active threats and malicious activities
-3. Defense - Protection mechanisms and controls
-4. Access Control - Authentication and authorization
-5. Network Security - Network-related protections
-6. Data Security - Data protection and privacy
-7. Compliance - Standards and regulations
-8. Incident Response - Security incident handling
-9. Infrastructure - System and platform security
+### Common Categories
+1. Vulnerability (90% base severity)
+2. Attack (85% base severity)
+3. Incident Response (80% base severity)
+4. Access Control (75% base severity)
+5. Network Security (70% base severity)
+6. Data Security (70% base severity)
+7. Defense (65% base severity)
+8. Infrastructure (60% base severity)
+9. Compliance (50% base severity)
 
-## Troubleshooting
-- If compilation fails, ensure all source files are in the same directory
-- If model loading fails, check that the model file exists in ../models/
-- For unknown terms, try using more common security terminology
-- Multi-word phrases work best when they're standard security terms 
+### Troubleshooting
+- If compilation fails:
+  * Ensure all source files are present
+  * Check C++17 compiler availability
+  * Verify file paths in compilation command
+- If classification returns -1.0:
+  * Check model file exists in specified directory
+  * Verify model file permissions
+  * Ensure model file is not corrupted
+- If classification returns 0.0:
+  * Try alternative phrasing
+  * Check for typos
+  * Use more common security terminology 
