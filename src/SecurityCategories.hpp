@@ -6,30 +6,30 @@
 
 namespace security {
 
-// Severity scores for each category (0.0 to 1.0)
+// Severity scores for each category (0.1 to 0.9)
 const std::map<std::string, float> CATEGORY_SEVERITY = {
-    {"Vulnerability", 0.9f},
-    {"Attack", 0.85f},
-    {"Incident Response", 0.8f},
-    {"Authentication", 0.78f},
-    {"Access Control", 0.75f},
-    {"Network Security", 0.7f},
-    {"Data Security", 0.7f},
-    {"Defense", 0.65f},
-    {"Social Engineering", 0.65f},
-    {"Infrastructure", 0.6f},
-    {"Supply Chain", 0.6f},
-    {"Logging & Auditing", 0.55f},
-    {"Compliance", 0.5f},
-    {"Privilege Escalation", 0.88f},
-    {"Cloud Security", 0.72f},
-    {"Container Security", 0.7f},
-    {"Orchestration Security", 0.68f},
-    {"API Security", 0.74f},
-    {"Storage Security", 0.66f},
-    {"Identity & Access Management", 0.76f},
-    {"Configuration Management", 0.58f},
-    {"DevOps Security", 0.6f}
+    {"Vulnerability", 0.9f},              // Critical security issues
+    {"Privilege Escalation", 0.85f},      // Direct system compromise
+    {"Attack", 0.8f},                     // Active threats
+    {"Authentication", 0.75f},            // Core security mechanism
+    {"Identity & Access Management", 0.7f},// Core identity controls
+    {"Access Control", 0.65f},            // Permission management
+    {"API Security", 0.6f},               // External interface security
+    {"Network Security", 0.55f},          // Network layer protection
+    {"Cloud Security", 0.5f},             // Cloud platform security
+    {"Container Security", 0.45f},        // Container isolation
+    {"Data Security", 0.4f},              // Data protection
+    {"Storage Security", 0.35f},          // Storage protection
+    {"Infrastructure", 0.3f},             // System components
+    {"Defense", 0.3f},                    // General protection
+    {"Incident Response", 0.25f},         // Response procedures
+    {"DevOps Security", 0.25f},           // Pipeline security
+    {"Orchestration Security", 0.2f},     // Deployment security
+    {"Supply Chain", 0.2f},               // Dependency security
+    {"Social Engineering", 0.15f},        // Human factor risks
+    {"Configuration Management", 0.15f},   // Config related
+    {"Logging & Auditing", 0.1f},         // Monitoring
+    {"Compliance", 0.1f}                  // Standards adherence
 };
 
 const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {

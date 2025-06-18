@@ -17,7 +17,7 @@ Classifier::Classifier() : dimension_(0) {}
 Classifier::~Classifier() = default;
 
 bool Classifier::initialize(const std::string& modelPath, const std::set<std::string>& required_words) {
-    std::cout << "Attempting to load model from: " << modelPath << std::endl;
+    // std::cout << "Attempting to load model from: " << modelPath << std::endl;
     
     std::ifstream in(modelPath, std::ios::binary);
     if (!in.is_open()) {
@@ -25,7 +25,7 @@ bool Classifier::initialize(const std::string& modelPath, const std::set<std::st
         return false;
     }
 
-    std::cout << "Successfully opened model file" << std::endl;
+    // std::cout << "Successfully opened model file" << std::endl;
 
     // Read header
     std::string line;
@@ -34,7 +34,7 @@ bool Classifier::initialize(const std::string& modelPath, const std::set<std::st
     size_t vocab_size;
     iss >> vocab_size >> dimension_;
     
-    std::cout << "Model header: vocab_size=" << vocab_size << ", dimension=" << dimension_ << std::endl;
+    // std::cout << "Model header: vocab_size=" << vocab_size << ", dimension=" << dimension_ << std::endl;
 
     // Read word vectors
     size_t words_loaded = 0;
@@ -69,7 +69,7 @@ bool Classifier::initialize(const std::string& modelPath, const std::set<std::st
         }
     }
 
-    std::cout << "Finished loading " << word_vectors_.size() << " word vectors" << std::endl;
+    // std::cout << "Finished loading " << word_vectors_.size() << " word vectors" << std::endl;
     return !word_vectors_.empty();
 }
 
@@ -189,9 +189,6 @@ SecurityClassification Classifier::classifyWord(const std::string& phrase, float
             if (std::find(keywords.begin(), keywords.end(), word) != keywords.end()) {
                 category_scores[category].confidence = 1.0f;
                 category_scores[category].matching_terms.push_back({word, 1.0f});
-                result.category = category;
-                result.confidence = 1.0f;
-                result.severity = category_scores[category].severity;
                 exact_match_found = true;
             }
         }
@@ -214,24 +211,13 @@ SecurityClassification Classifier::classifyWord(const std::string& phrase, float
                 }
             }
         }
-
-        // Find the category with the highest confidence
-        float max_confidence = 0.0f;
-        for (const auto& [category, score] : category_scores) {
-            if (score.confidence > max_confidence) {
-                max_confidence = score.confidence;
-                result.category = category;
-                result.confidence = score.confidence;
-                result.severity = score.severity;
-            }
-        }
     }
 
     // Sort similar terms by score
     std::sort(result.similar_terms.begin(), result.similar_terms.end(),
               [](const auto& a, const auto& b) { return a.second > b.second; });
 
-    // Add category scores to result
+    // Add all non-zero confidence categories to result
     for (const auto& [category, score] : category_scores) {
         if (score.confidence > 0.0f) {
             // Sort matching terms for this category
@@ -246,6 +232,38 @@ SecurityClassification Classifier::classifyWord(const std::string& phrase, float
     // Sort categories by confidence
     std::sort(result.all_scores.begin(), result.all_scores.end(),
               [](const auto& a, const auto& b) { return a.confidence > b.confidence; });
+
+    // Set the primary category and scores based on the highest confidence category
+    if (!result.all_scores.empty()) {
+        result.category = result.all_scores[0].category;
+        result.confidence = result.all_scores[0].confidence;
+        
+        // Calculate weighted average severity from top 3 categories
+        double total_weighted_severity = 0.0;
+        double total_weights = 0.0;
+        
+        for (size_t i = 0; i < std::min(size_t(3), result.all_scores.size()); ++i) {
+            if (result.all_scores[i].confidence > 0.0f) {
+                // Much more aggressive position weighting: 1.0, 0.5, 0.25 for positions 0,1,2
+                double position_weight = std::pow(0.5, i);  // Exponential decay
+                
+                // Square the severity to make high severities much more impactful
+                double severity_weight = std::pow(result.all_scores[i].severity, 2.0);
+                
+                // Multiply confidence into the weight to further emphasize strong matches
+                double confidence_boost = std::pow(result.all_scores[i].confidence, 1.5);
+                
+                double combined_weight = position_weight * severity_weight * confidence_boost;
+                
+                total_weighted_severity += result.all_scores[i].severity * combined_weight;
+                total_weights += combined_weight;
+            }
+        }
+        
+        // Set final severity with 3 decimal places precision
+        result.severity = total_weights > 0.0 ? 
+            std::round((total_weighted_severity / total_weights) * 1000.0) / 1000.0 : 0.0;
+    }
 
     return result;
 }

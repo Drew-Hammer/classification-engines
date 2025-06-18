@@ -6,7 +6,9 @@
 
 const std::vector<std::string> TextProcessor::COMMON_SUFFIXES = {
     "ing", "tion", "sion", "ment", "ity", "ness", "able", "ible", "ize", "ise",
-    "ed", "ly", "ful", "less", "er", "or", "ive", "al", "ic", "ous"
+    "ed", "ly", "ful", "less", "er", "or", "ive", "al", "ic", "ous",
+    "ation", "ization", "isation", "ifying", "ifying", "alist", "alism",
+    "ility", "arity", "ivity", "ingly", "ately", "atory", "ified"
 };
 
 // Define security-related abbreviations and their expansions
@@ -52,6 +54,66 @@ const std::map<std::string, std::vector<std::string>> TextProcessor::SECURITY_AB
     {"xss", {"cross site scripting"}}
 };
 
+// Define security-related word forms (base form -> variations)
+const std::map<std::string, std::string> TextProcessor::SECURITY_WORD_FORMS = {
+    {"access", "accessed"},
+    {"attack", "attacked"},
+    {"authenticate", "authenticated"},
+    {"authorize", "authorized"},
+    {"block", "blocked"},
+    {"breach", "breached"},
+    {"bypass", "bypassed"},
+    {"compromise", "compromised"},
+    {"configure", "configured"},
+    {"corrupt", "corrupted"},
+    {"crack", "cracked"},
+    {"decrypt", "decrypted"},
+    {"detect", "detected"},
+    {"encrypt", "encrypted"},
+    {"escalate", "escalated"},
+    {"execute", "executed"},
+    {"exploit", "exploited"},
+    {"filter", "filtered"},
+    {"hack", "hacked"},
+    {"implement", "implemented"},
+    {"infect", "infected"},
+    {"inject", "injected"},
+    {"intercept", "intercepted"},
+    {"leak", "leaked"},
+    {"mitigate", "mitigated"},
+    {"monitor", "monitored"},
+    {"patch", "patched"},
+    {"protect", "protected"},
+    {"scan", "scanned"},
+    {"secure", "secured"},
+    {"validate", "validated"},
+    {"verify", "verified"}
+};
+
+// Define irregular verbs common in security context
+const std::map<std::string, std::string> TextProcessor::IRREGULAR_VERBS = {
+    {"running", "run"},
+    {"ran", "run"},
+    {"written", "write"},
+    {"wrote", "write"},
+    {"built", "build"},
+    {"found", "find"},
+    {"made", "make"},
+    {"sent", "send"},
+    {"broken", "break"},
+    {"broke", "break"},
+    {"stolen", "steal"},
+    {"stole", "steal"},
+    {"hidden", "hide"},
+    {"hid", "hide"},
+    {"caught", "catch"},
+    {"taught", "teach"},
+    {"lost", "lose"},
+    {"meant", "mean"},
+    {"kept", "keep"},
+    {"left", "leave"}
+};
+
 std::string TextProcessor::normalize(const std::string& text) {
     std::string result;
     result.reserve(text.length());
@@ -67,6 +129,11 @@ std::string TextProcessor::normalize(const std::string& text) {
 bool TextProcessor::endsWith(const std::string& word, const std::string& suffix) {
     if (word.length() < suffix.length()) return false;
     return word.compare(word.length() - suffix.length(), suffix.length(), suffix) == 0;
+}
+
+bool TextProcessor::startsWith(const std::string& word, const std::string& prefix) {
+    if (word.length() < prefix.length()) return false;
+    return word.compare(0, prefix.length(), prefix) == 0;
 }
 
 std::string TextProcessor::stem(const std::string& word) {
@@ -92,6 +159,59 @@ std::string TextProcessor::stem(const std::string& word) {
     }
     
     return stemmed;
+}
+
+std::string TextProcessor::lemmatize(const std::string& word) {
+    if (word.length() < 3) return word;
+    
+    std::string normalized = normalize(word);
+    
+    // Check irregular verbs first
+    auto irregularIt = IRREGULAR_VERBS.find(normalized);
+    if (irregularIt != IRREGULAR_VERBS.end()) {
+        return irregularIt->second;
+    }
+    
+    // Check security-specific word forms
+    for (const auto& [base, variation] : SECURITY_WORD_FORMS) {
+        if (normalized == variation) {
+            return base;
+        }
+    }
+    
+    // Apply enhanced stemming rules
+    std::string result = normalized;
+    
+    // Handle common verb forms
+    if (endsWith(result, "ing")) {
+        // Double consonant + ing (e.g., running -> run)
+        if (result.length() > 4 && result[result.length()-4] == result[result.length()-5]) {
+            return result.substr(0, result.length()-4);
+        }
+        // Normal -ing
+        return result.substr(0, result.length()-3);
+    }
+    
+    if (endsWith(result, "ed")) {
+        // Double consonant + ed (e.g., stopped -> stop)
+        if (result.length() > 3 && result[result.length()-3] == result[result.length()-4]) {
+            return result.substr(0, result.length()-3);
+        }
+        // Normal -ed
+        return result.substr(0, result.length()-2);
+    }
+    
+    // Handle common noun forms
+    if (endsWith(result, "ation")) return result.substr(0, result.length()-5) + "e";
+    if (endsWith(result, "ment")) return result.substr(0, result.length()-4);
+    if (endsWith(result, "ity")) return result.substr(0, result.length()-3) + "e";
+    
+    // Handle adjective forms
+    if (endsWith(result, "able")) return result.substr(0, result.length()-4);
+    if (endsWith(result, "ible")) return result.substr(0, result.length()-4);
+    
+    // If no specific rules match, try basic stemming
+    return stem(result);
 }
 
 std::vector<std::string> TextProcessor::splitCamelCase(const std::string& word) {
@@ -276,17 +396,15 @@ std::vector<std::string> TextProcessor::getAllWordCombinations(const std::string
             auto expansions = expandAbbreviations(token);
             expanded_tokens.insert(expanded_tokens.end(), expansions.begin(), expansions.end());
         }
+        
+        // Add lemmatized form
+        expanded_tokens.push_back(lemmatize(token));
     }
     
     // Generate all possible n-grams from both original and expanded tokens
     for (size_t n = 1; n <= expanded_tokens.size(); ++n) {
         auto ngrams = generateNGrams(phrase, n);
         combinations.insert(combinations.end(), ngrams.begin(), ngrams.end());
-    }
-    
-    // Add stemmed versions of tokens
-    for (const auto& token : expanded_tokens) {
-        combinations.push_back(stem(token));
     }
     
     // Remove duplicates
