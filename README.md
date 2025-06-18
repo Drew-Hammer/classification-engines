@@ -13,22 +13,14 @@ This project implements a fast and efficient classification system that uses Fas
 
 ## Prerequisites
 
-- CMake (version 3.10 or higher)
 - C++17 compatible compiler
 - Git (for fetching FastText dependency)
 
 ## Building the Project
 
 ```bash
-# Create a build directory
-mkdir build
-cd build
-
-# Configure and build
-cmake ..
-make
-
-# The build will automatically download and compile FastText
+# Compile the classifier
+g++ -std=c++17 src/test_engine.cpp src/classification_engine.cpp src/Classifier.cpp src/TextProcessor.cpp -o test_engine
 ```
 
 ## Usage
@@ -42,7 +34,7 @@ Before using the classifier, you'll need a pre-trained FastText model. You can e
 The example program demonstrates how to use the classifier with some sample classifications:
 
 ```bash
-./src/classifier_example path/to/your/fasttext/model.bin
+./test_engine
 ```
 
 ### Using in Your Own Code
@@ -133,14 +125,6 @@ cp /path/to/your/security_model.bin models/
 # Create local config (if needed)
 cp config.example.json config.local.json
 # Edit config.local.json with your settings
-```
-
-3. Build Setup
-```bash
-# Create build directory
-mkdir build && cd build
-cmake ..
-make
 ```
 
 ### Maintaining Clean Version Control

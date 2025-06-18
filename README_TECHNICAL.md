@@ -230,6 +230,9 @@ security 0.4 0.5 0.6 ... (300 dimensions)
 ## Testing
 To run tests with different types of inputs:
 ```bash
+# Compile the test program
+g++ -std=c++17 src/test_classifier.cpp src/Classifier.cpp src/TextProcessor.cpp -o test_classifier
+
 # Test single words
 ./test_classifier "vulnerability"
 
