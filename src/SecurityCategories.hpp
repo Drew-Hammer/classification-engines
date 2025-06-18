@@ -73,7 +73,9 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "authorization", "identity", "account", "login", "session",
         "token", "certificate", "rights", "sudo", "root", "group",
         "lockout", "multi-factor", "mfa", "2fa", "otp", "biometrics",
-        "authorization level", "delegation", "rbac", "abac", "iam"
+        "authorization level", "delegation", "rbac", "abac", "iam",
+        "ssh", "secure shell", "remote access", "key based auth",
+        "public key auth", "private key", "key pair", "passphrase"
     }},
 
     {"Network Security", {
@@ -81,7 +83,9 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "protocol", "port", "interface", "gateway", "dns", "ip", "tcp",
         "udp", "vpn", "proxy", "nat", "vlan", "segment", "perimeter",
         "intrusion", "egress", "ingress", "sniffer", "man-in-the-middle",
-        "ssid", "spoofing", "arp", "dos", "ddos", "ssl", "tls", "open port"
+        "ssid", "spoofing", "arp", "dos", "ddos", "ssl", "tls", "open port",
+        "ssh", "secure shell", "remote access", "encrypted connection", 
+        "secure connection", "network protocol", "remote shell"
     }},
 
     {"Data Security", {
@@ -195,7 +199,8 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
     }},
 
     {"DevOps Security", {
-        "ci/cd", "pipeline", "devops", "build process", "build artifact", "code signing",
+        "ci/cd", "ci cd", "ci pipeline", "devops", "dev ops", "dev-ops", "devops security"
+        , "build process", "build artifact", "code signing", "pipeline", "pipeline abuse",
         "source control", "github", "gitlab", "bitbucket", "repository", "commit",
         "secrets in repo", "cicd credential", "workflow abuse", "build server", "artifact injection",
         "script injection", "automation", "deployment pipeline", "insecure runner"

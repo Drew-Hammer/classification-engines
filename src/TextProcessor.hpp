@@ -23,6 +23,9 @@ public:
     // Get all possible word combinations from a phrase
     static std::vector<std::string> getAllWordCombinations(const std::string& phrase);
 
+    // Split camelCase word into individual words
+    static std::vector<std::string> splitCamelCase(const std::string& word);
+
     // Expand abbreviations in text
     static std::vector<std::string> expandAbbreviations(const std::string& text);
 

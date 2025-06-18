@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <sstream>
 #include <cctype>
+#include <iostream>
 
 const std::vector<std::string> TextProcessor::COMMON_SUFFIXES = {
     "ing", "tion", "sion", "ment", "ity", "ness", "able", "ible", "ize", "ise",
@@ -17,6 +18,7 @@ const std::map<std::string, std::vector<std::string>> TextProcessor::SECURITY_AB
     {"csrf", {"cross site request forgery"}},
     {"cvss", {"common vulnerability scoring system"}},
     {"ddos", {"distributed denial of service"}},
+    {"devops", {"development operations", "dev ops", "development and operations"}},
     {"dlp", {"data loss prevention", "data leakage protection"}},
     {"dmz", {"demilitarized zone"}},
     {"dns", {"domain name system"}},
@@ -42,6 +44,7 @@ const std::map<std::string, std::vector<std::string>> TextProcessor::SECURITY_AB
     {"siem", {"security information and event management"}},
     {"soc", {"security operations center"}},
     {"sql", {"structured query language"}},
+    {"ssh", {"secure shell", "secure shell protocol"}},
     {"ssl", {"secure sockets layer"}},
     {"tls", {"transport layer security"}},
     {"vpn", {"virtual private network"}},
@@ -91,15 +94,110 @@ std::string TextProcessor::stem(const std::string& word) {
     return stemmed;
 }
 
+std::vector<std::string> TextProcessor::splitCamelCase(const std::string& word) {
+    std::vector<std::string> result;
+    if (word.empty()) return result;
+    
+    std::cout << "DEBUG splitCamelCase: Processing word: '" << word << "'" << std::endl;
+    
+    // First, insert spaces before capital letters and numbers
+    std::string spaced;
+    spaced += word[0];
+    
+    for (size_t i = 1; i < word.length(); ++i) {
+        char current = word[i];
+        char prev = word[i-1];
+        
+        // Add space before:
+        // 1. Capital letters (but not if previous was capital - handles acronyms like SSH)
+        // 2. Numbers (but not if previous was a number)
+        if ((std::isupper(current) && !std::isupper(prev)) ||
+            (std::isdigit(current) && !std::isdigit(prev))) {
+            spaced += ' ';
+            std::cout << "DEBUG splitCamelCase: Adding space before: '" << current << "'" << std::endl;
+        }
+        spaced += current;
+    }
+    
+    std::cout << "DEBUG splitCamelCase: After spacing: '" << spaced << "'" << std::endl;
+    
+    // Split by space and convert to lowercase
+    std::istringstream iss(spaced);
+    std::string token;
+    while (iss >> token) {
+        // Convert to lowercase unless it's an acronym (all caps)
+        bool isAcronym = token.length() > 1 && 
+                        std::all_of(token.begin(), token.end(), [](char c) { 
+                            return std::isupper(c) || std::isdigit(c); 
+                        });
+        
+        std::cout << "DEBUG splitCamelCase: Found token: '" << token 
+                  << "', isAcronym: " << (isAcronym ? "true" : "false") << std::endl;
+        
+        if (!isAcronym) {
+            std::transform(token.begin(), token.end(), token.begin(), ::tolower);
+            std::cout << "DEBUG splitCamelCase: Lowercased to: '" << token << "'" << std::endl;
+        }
+        result.push_back(token);
+    }
+    
+    std::cout << "DEBUG splitCamelCase: Final tokens:" << std::endl;
+    for (const auto& t : result) {
+        std::cout << "  - '" << t << "'" << std::endl;
+    }
+    
+    return result;
+}
+
 std::vector<std::string> TextProcessor::tokenize(const std::string& text) {
     std::vector<std::string> tokens;
-    std::istringstream iss(normalize(text));
+    std::cout << "DEBUG tokenize: Input text: '" << text << "'" << std::endl;
+    
+    // First split by whitespace while preserving case
+    std::istringstream rawIss(text);
     std::string token;
     
-    while (iss >> token) {
+    while (rawIss >> token) {
         if (!token.empty()) {
-            tokens.push_back(token);
+            std::cout << "DEBUG tokenize: Processing token: '" << token << "'" << std::endl;
+            
+            // Check if the token might be camelCase
+            bool hasCamelCase = false;
+            bool hasLower = false;
+            bool hasUpper = false;
+            
+            for (char c : token) {
+                if (std::islower(c)) hasLower = true;
+                if (std::isupper(c)) hasUpper = true;
+                if (hasLower && hasUpper) {
+                    hasCamelCase = true;
+                    break;
+                }
+            }
+            
+            std::cout << "DEBUG tokenize: Token analysis - hasLower: " << (hasLower ? "true" : "false")
+                      << ", hasUpper: " << (hasUpper ? "true" : "false")
+                      << ", hasCamelCase: " << (hasCamelCase ? "true" : "false") << std::endl;
+            
+            std::vector<std::string> parts;
+            if (hasCamelCase || (token.find_first_of("0123456789") != std::string::npos)) {
+                std::cout << "DEBUG tokenize: Splitting camelCase word" << std::endl;
+                parts = splitCamelCase(token);
+            } else {
+                std::cout << "DEBUG tokenize: Adding token as-is" << std::endl;
+                parts.push_back(token);
+            }
+            
+            // Now normalize each part
+            for (const auto& part : parts) {
+                tokens.push_back(normalize(part));
+            }
         }
+    }
+    
+    std::cout << "DEBUG tokenize: Final tokens:" << std::endl;
+    for (const auto& t : tokens) {
+        std::cout << "  - '" << t << "'" << std::endl;
     }
     
     return tokens;
@@ -167,14 +265,17 @@ std::vector<std::string> TextProcessor::getAllWordCombinations(const std::string
     std::vector<std::string> combinations;
     auto tokens = tokenize(phrase);
     
-    // Handle each token for abbreviations
+    // Handle each token for abbreviations and keep original forms
     std::vector<std::string> expanded_tokens;
     for (const auto& token : tokens) {
+        // Always add the original token (normalized)
+        expanded_tokens.push_back(normalize(token));
+        
+        // Handle abbreviations
         if (isAbbreviation(token)) {
             auto expansions = expandAbbreviations(token);
             expanded_tokens.insert(expanded_tokens.end(), expansions.begin(), expansions.end());
         }
-        expanded_tokens.push_back(token);
     }
     
     // Generate all possible n-grams from both original and expanded tokens
@@ -186,14 +287,6 @@ std::vector<std::string> TextProcessor::getAllWordCombinations(const std::string
     // Add stemmed versions of tokens
     for (const auto& token : expanded_tokens) {
         combinations.push_back(stem(token));
-    }
-    
-    // Add expanded forms of abbreviations
-    for (const auto& token : tokens) {
-        if (isAbbreviation(token)) {
-            auto expansions = expandAbbreviations(token);
-            combinations.insert(combinations.end(), expansions.begin(), expansions.end());
-        }
     }
     
     // Remove duplicates
