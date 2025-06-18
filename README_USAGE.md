@@ -1,5 +1,70 @@
 # Security Term Classifier - Quick Usage Guide
 
+## Using as a Library in Your Code
+
+### Integration Steps
+1. Copy these files to your project:
+   ```
+   src/classification_engine.cpp
+   src/classification_engine.hpp
+   src/Classifier.cpp
+   src/Classifier.hpp
+   src/TextProcessor.cpp
+   src/TextProcessor.hpp
+   src/SecurityCategories.hpp
+   ```
+
+2. Include the header in your code:
+   ```cpp
+   #include "classification_engine.hpp"
+   ```
+
+3. Add the source files to your build:
+   ```bash
+   g++ -std=c++17 your_code.cpp classification_engine.cpp Classifier.cpp TextProcessor.cpp -o your_program
+   ```
+
+### Usage Example
+```cpp
+#include "classification_engine.hpp"
+#include <iostream>
+
+void checkSecuritySeverity(const std::string& text) {
+    double severity = classifyText(text);  // Returns 0.0 to 1.0
+    
+    if (severity >= 0.8) {
+        std::cout << "HIGH security concern (" << (severity * 100) << "%)\n";
+        // Handle high-severity case
+    } else if (severity >= 0.6) {
+        std::cout << "MEDIUM security concern (" << (severity * 100) << "%)\n";
+        // Handle medium-severity case
+    } else {
+        std::cout << "LOW security concern (" << (severity * 100) << "%)\n";
+        // Handle low-severity case
+    }
+}
+```
+
+### Important Notes
+- The function `classifyText()` returns a double between 0.0 and 1.0
+- Severity levels:
+  * HIGH: ≥ 0.8 (80%)
+  * MEDIUM: 0.6-0.79 (60-79%)
+  * LOW: < 0.6 (below 60%)
+- Model files must be in the correct relative path: `../models/`
+- The classifier is initialized only once (uses static initialization)
+- Handles camelCase and compound words automatically
+- Thread-safe for classification but not for initialization
+
+### Model Requirements
+- Requires either `security_model.bin` or `wiki.en.bin` in the `../models/` directory
+- Will attempt to load security-specific model first, then fall back to full model
+- Returns -1.0 if no model can be loaded
+
+---
+
+## Command-Line Usage
+
 ## Quick Start
 1. Compile the classifier:
 ```bash

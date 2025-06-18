@@ -98,7 +98,7 @@ std::vector<std::string> TextProcessor::splitCamelCase(const std::string& word) 
     std::vector<std::string> result;
     if (word.empty()) return result;
     
-    std::cout << "DEBUG splitCamelCase: Processing word: '" << word << "'" << std::endl;
+    // std::cout << "DEBUG splitCamelCase: Processing word: '" << word << "'" << std::endl;
     
     // First, insert spaces before capital letters and numbers
     std::string spaced;
@@ -114,44 +114,44 @@ std::vector<std::string> TextProcessor::splitCamelCase(const std::string& word) 
         if ((std::isupper(current) && !std::isupper(prev)) ||
             (std::isdigit(current) && !std::isdigit(prev))) {
             spaced += ' ';
-            std::cout << "DEBUG splitCamelCase: Adding space before: '" << current << "'" << std::endl;
+            // std::cout << "DEBUG splitCamelCase: Adding space before: '" << current << "'" << std::endl;
         }
         spaced += current;
     }
     
-    std::cout << "DEBUG splitCamelCase: After spacing: '" << spaced << "'" << std::endl;
+    // std::cout << "DEBUG splitCamelCase: After spacing: '" << spaced << "'" << std::endl;
     
-    // Split by space and convert to lowercase
+    // Split by space and handle each part
     std::istringstream iss(spaced);
     std::string token;
     while (iss >> token) {
-        // Convert to lowercase unless it's an acronym (all caps)
+        // Check if token is an acronym (all uppercase)
         bool isAcronym = token.length() > 1 && 
-                        std::all_of(token.begin(), token.end(), [](char c) { 
-                            return std::isupper(c) || std::isdigit(c); 
-                        });
+                        std::all_of(token.begin(), token.end(), ::isupper);
         
-        std::cout << "DEBUG splitCamelCase: Found token: '" << token 
-                  << "', isAcronym: " << (isAcronym ? "true" : "false") << std::endl;
+        // std::cout << "DEBUG splitCamelCase: Found token: '" << token 
+        //           << "', isAcronym: " << (isAcronym ? "true" : "false") << std::endl;
         
+        // Convert to lowercase unless it's an acronym
         if (!isAcronym) {
             std::transform(token.begin(), token.end(), token.begin(), ::tolower);
-            std::cout << "DEBUG splitCamelCase: Lowercased to: '" << token << "'" << std::endl;
+            // std::cout << "DEBUG splitCamelCase: Lowercased to: '" << token << "'" << std::endl;
         }
+        
         result.push_back(token);
     }
     
-    std::cout << "DEBUG splitCamelCase: Final tokens:" << std::endl;
-    for (const auto& t : result) {
-        std::cout << "  - '" << t << "'" << std::endl;
-    }
+    // std::cout << "DEBUG splitCamelCase: Final tokens:" << std::endl;
+    // for (const auto& t : result) {
+    //     std::cout << "  - '" << t << "'" << std::endl;
+    // }
     
     return result;
 }
 
 std::vector<std::string> TextProcessor::tokenize(const std::string& text) {
     std::vector<std::string> tokens;
-    std::cout << "DEBUG tokenize: Input text: '" << text << "'" << std::endl;
+    // std::cout << "DEBUG tokenize: Input text: '" << text << "'" << std::endl;
     
     // First split by whitespace while preserving case
     std::istringstream rawIss(text);
@@ -159,7 +159,7 @@ std::vector<std::string> TextProcessor::tokenize(const std::string& text) {
     
     while (rawIss >> token) {
         if (!token.empty()) {
-            std::cout << "DEBUG tokenize: Processing token: '" << token << "'" << std::endl;
+            // std::cout << "DEBUG tokenize: Processing token: '" << token << "'" << std::endl;
             
             // Check if the token might be camelCase
             bool hasCamelCase = false;
@@ -175,16 +175,16 @@ std::vector<std::string> TextProcessor::tokenize(const std::string& text) {
                 }
             }
             
-            std::cout << "DEBUG tokenize: Token analysis - hasLower: " << (hasLower ? "true" : "false")
-                      << ", hasUpper: " << (hasUpper ? "true" : "false")
-                      << ", hasCamelCase: " << (hasCamelCase ? "true" : "false") << std::endl;
+            // std::cout << "DEBUG tokenize: Token analysis - hasLower: " << (hasLower ? "true" : "false")
+            //           << ", hasUpper: " << (hasUpper ? "true" : "false")
+            //           << ", hasCamelCase: " << (hasCamelCase ? "true" : "false") << std::endl;
             
             std::vector<std::string> parts;
             if (hasCamelCase || (token.find_first_of("0123456789") != std::string::npos)) {
-                std::cout << "DEBUG tokenize: Splitting camelCase word" << std::endl;
+                // std::cout << "DEBUG tokenize: Splitting camelCase word" << std::endl;
                 parts = splitCamelCase(token);
             } else {
-                std::cout << "DEBUG tokenize: Adding token as-is" << std::endl;
+                // std::cout << "DEBUG tokenize: Adding token as-is" << std::endl;
                 parts.push_back(token);
             }
             
@@ -195,10 +195,10 @@ std::vector<std::string> TextProcessor::tokenize(const std::string& text) {
         }
     }
     
-    std::cout << "DEBUG tokenize: Final tokens:" << std::endl;
-    for (const auto& t : tokens) {
-        std::cout << "  - '" << t << "'" << std::endl;
-    }
+    // std::cout << "DEBUG tokenize: Final tokens:" << std::endl;
+    // for (const auto& t : tokens) {
+    //     std::cout << "  - '" << t << "'" << std::endl;
+    // }
     
     return tokens;
 }
