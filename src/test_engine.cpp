@@ -5,6 +5,9 @@
 #include <utility>
 
 int main() {
+    // Set the correct model directory
+    setModelDirectory("models");
+    
     // Test cases with different security-related terms
     std::vector<std::string> test_cases = {
         "hasSsh",

@@ -19,8 +19,12 @@
    #include "classification_engine.hpp"
    ```
 
-3. Add the source files to your build:
+3. Compile your code with the classifier:
    ```bash
+   # If compiling from the root directory:
+   g++ -std=c++17 your_code.cpp src/classification_engine.cpp src/Classifier.cpp src/TextProcessor.cpp -o your_program
+
+   # If you copied the files to your working directory:
    g++ -std=c++17 your_code.cpp classification_engine.cpp Classifier.cpp TextProcessor.cpp -o your_program
    ```
 
@@ -30,7 +34,14 @@
 #include <iostream>
 
 void checkSecuritySeverity(const std::string& text) {
-    double severity = classifyText(text);  // Returns 0.0 to 1.0
+    // Configure model directory (do this once at startup)
+    // Option 1: Set a custom path
+    setModelDirectory("/path/to/your/models");
+    // Option 2: Use default "models" directory in current path
+    setModelDirectory("models");
+    
+    // Classify text
+    double severity = classifyText(text);
     
     if (severity >= 0.8) {
         std::cout << "HIGH security concern (" << (severity * 100) << "%)\n";
@@ -51,15 +62,35 @@ void checkSecuritySeverity(const std::string& text) {
   * HIGH: ≥ 0.8 (80%)
   * MEDIUM: 0.6-0.79 (60-79%)
   * LOW: < 0.6 (below 60%)
-- Model files must be in the correct relative path: `../models/`
+- Model Path Configuration:
+  * Use `setModelDirectory()` to set the path to your model files
+  * Default is "models" in the current directory if not set
+  * Path can be relative or absolute
+  * No trailing slash needed (e.g., "models" not "models/")
 - The classifier is initialized only once (uses static initialization)
 - Handles camelCase and compound words automatically
 - Thread-safe for classification but not for initialization
 
 ### Model Requirements
-- Requires either `security_model.bin` or `wiki.en.bin` in the `../models/` directory
+- Requires either `security_model.bin` or `wiki.en.bin` in your models directory
 - Will attempt to load security-specific model first, then fall back to full model
 - Returns -1.0 if no model can be loaded
+
+### Model Configuration
+You can configure where the model files are located in two ways:
+
+1. Set the model directory globally (do this once at startup):
+   ```cpp
+   setModelDirectory("path/to/models");  // Use relative or absolute path
+   double severity = classifyText("your text here");
+   ```
+
+2. Or specify the model directory per classification call:
+   ```cpp
+   double severity = classifyText("your text here", "path/to/models");
+   ```
+
+Note: The model directory should contain either `security_model.bin` or `wiki.en.bin`.
 
 ---
 
