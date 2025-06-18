@@ -8,20 +8,28 @@ namespace security {
 
 // Severity scores for each category (0.0 to 1.0)
 const std::map<std::string, float> CATEGORY_SEVERITY = {
-    {"Vulnerability", 0.9f},          // Most severe - direct security weaknesses
-    {"Attack", 0.85f},                // Active threats
-    {"Incident Response", 0.8f},      // Critical response needed
-    {"Authentication", 0.78f},        // Identity verification failures
-    {"Access Control", 0.75f},        // Important security controls
-    {"Network Security", 0.7f},       // Network-level protections
-    {"Data Security", 0.7f},          // Data protection concerns
-    {"Defense", 0.65f},               // General security measures
-    {"Social Engineering", 0.65f},    // Human-centered attack vectors
-    {"Infrastructure", 0.6f},         // System-level concerns
-    {"Supply Chain", 0.6f},           // Vendor and third-party risk
-    {"Logging & Auditing", 0.55f},    // Observability, logs, forensics
-    {"Compliance", 0.5f},             // Policy and regulation
-    {"Privilege Escalation", 0.88f}   // Unauthorized access level increase
+    {"Vulnerability", 0.9f},
+    {"Attack", 0.85f},
+    {"Incident Response", 0.8f},
+    {"Authentication", 0.78f},
+    {"Access Control", 0.75f},
+    {"Network Security", 0.7f},
+    {"Data Security", 0.7f},
+    {"Defense", 0.65f},
+    {"Social Engineering", 0.65f},
+    {"Infrastructure", 0.6f},
+    {"Supply Chain", 0.6f},
+    {"Logging & Auditing", 0.55f},
+    {"Compliance", 0.5f},
+    {"Privilege Escalation", 0.88f},
+    {"Cloud Security", 0.72f},
+    {"Container Security", 0.7f},
+    {"Orchestration Security", 0.68f},
+    {"API Security", 0.74f},
+    {"Storage Security", 0.66f},
+    {"Identity & Access Management", 0.76f},
+    {"Configuration Management", 0.58f},
+    {"DevOps Security", 0.6f}
 };
 
 const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
@@ -138,6 +146,59 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "elevation", "elevated", "unauthorized privilege", "gain access",
         "sudo abuse", "bypass privileges", "runas", "setuid", "token theft",
         "impersonation", "capability abuse", "permission elevation"
+    }},
+    {"Cloud Security", {
+        "cloud", "aws", "azure", "gcp", "iam", "cloud trail", "s3 bucket", "object storage",
+        "cloud function", "lambda", "cloudwatch", "misconfigured bucket", "cloud identity",
+        "cloud security", "secrets manager", "cloud credentials", "public bucket",
+        "account compromise", "cloud-native", "instance metadata", "iam policy", "shared responsibility"
+    }},
+
+    {"Container Security", {
+        "container", "docker", "image", "registry", "container runtime", "container escape",
+        "privileged container", "insecure image", "malicious image", "container vulnerability",
+        "container isolation", "runC", "namespaces", "cgroups", "volume mount",
+        "container exploit", "entrypoint abuse", "exposed docker", "overlay filesystem"
+    }},
+
+    {"Orchestration Security", {
+        "kubernetes", "k8s", "pod", "deployment", "cluster", "node", "service account",
+        "role binding", "rbac", "etcd", "helm", "ingress", "network policy", "container orchestrator",
+        "orchestration", "configmap", "secrets", "kubelet", "api server", "cluster-admin",
+        "namespace isolation", "misconfigured cluster", "exposed dashboard", "cni plugin"
+    }},
+
+    {"API Security", {
+        "api", "endpoint", "rest", "graphql", "openapi", "swagger", "api gateway", "rate limiting",
+        "unauthorized access", "token leakage", "broken auth", "idor", "parameter tampering",
+        "excessive data exposure", "injection", "rate limit bypass", "api key", "broken object level authorization"
+    }},
+
+    {"Storage Security", {
+        "storage", "object storage", "blob storage", "disk", "volume", "mount", "storage access",
+        "encryption at rest", "storage leak", "shared volume", "storage exposure", "unsecured disk",
+        "cloud storage", "efs", "nfs", "block device", "misconfigured share"
+    }},
+
+    {"Identity & Access Management", {
+        "iam", "identity", "role", "policy", "access key", "identity federation", "trust relationship",
+        "principal", "sts", "role assumption", "cross-account access", "least privilege",
+        "access control list", "authorization", "privilege", "authentication", "user directory",
+        "ldap", "sso", "oauth", "openid", "saml"
+    }},
+
+    {"Configuration Management", {
+        "configuration", "misconfiguration", "default credentials", "open port", "exposed service",
+        "unrestricted access", "public access", "security group", "firewall rule", "excessive permissions",
+        "configuration drift", "settings", "parameter", "config file", "exposed config", "environment variable",
+        "exposed secret", "insecure default"
+    }},
+
+    {"DevOps Security", {
+        "ci/cd", "pipeline", "devops", "build process", "build artifact", "code signing",
+        "source control", "github", "gitlab", "bitbucket", "repository", "commit",
+        "secrets in repo", "cicd credential", "workflow abuse", "build server", "artifact injection",
+        "script injection", "automation", "deployment pipeline", "insecure runner"
     }}
 };
 
