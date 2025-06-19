@@ -24,7 +24,7 @@
    # If compiling from the root directory:
    g++ -std=c++17 your_code.cpp src/classification_engine.cpp src/Classifier.cpp src/TextProcessor.cpp -o your_program
 
-   g++ -std=c++17 test_engine.cpp src/classification_engine.cpp src/Classifier.cpp src/TextProcessor.cpp -o test_engine
+   g++ -std=c++17 src/test_engine.cpp src/classification_engine.cpp src/Classifier.cpp src/TextProcessor.cpp -o test_engine
 
    # If you copied the files to your working directory:
    g++ -std=c++17 your_code.cpp classification_engine.cpp Classifier.cpp TextProcessor.cpp -o your_program

@@ -14,10 +14,11 @@ int main() {
         "DevOps security issue",
         "malware detected",
         "normal non-security text",
-        "SQL injection attempt",
-        "password expired",
+        "has packet capture",
+        "sql Injection Attack",
         "network firewall",
-        "2FA authentication failed",
+        "Postcondition exploit Buffer Overflow changed has Port Scan using buffer Overflow Exploit",
+        "Changed has Port Scan",
         "vulnerability detected",
         "logging issues"
     };

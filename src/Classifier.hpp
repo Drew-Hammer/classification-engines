@@ -7,7 +7,7 @@
 #include <utility>
 #include <map>
 
-constexpr float SIMILARITY_THRESHOLD = 0.45f;
+constexpr float SIMILARITY_THRESHOLD = 0.65f;
 
 struct CategoryScore {
     std::string category;

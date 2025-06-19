@@ -55,14 +55,19 @@ double classifyText(const std::string& text, const std::string& model_dir) {
     // Take top 3 categories or all if less than 3
     for (size_t i = 0; i < std::min(size_t(3), result.all_scores.size()); ++i) {
         if (result.all_scores[i].confidence > 0.0f) {
-            // Much more aggressive position weighting: 1.0, 0.5, 0.25 for positions 0,1,2
-            double position_weight = std::pow(0.5, i);  // Exponential decay
+            // More conservative position weighting: 1.0, 0.3, 0.1 for positions 0,1,2
+            double position_weight = std::pow(0.3, i);  // Steeper decay
             
-            // Square the severity to make high severities much more impactful
-            double severity_weight = std::pow(result.all_scores[i].severity, 2.0);
+            // Linear severity to avoid over-amplifying high severities
+            double severity_weight = result.all_scores[i].severity;
             
-            // Multiply confidence into the weight to further emphasize strong matches
-            double confidence_boost = std::pow(result.all_scores[i].confidence, 1.5);
+            // Penalize partial matches more heavily
+            double confidence_boost = result.all_scores[i].confidence * result.all_scores[i].confidence;  // Square to penalize low confidence
+            
+            // Additional penalty for very low confidence matches
+            if (result.all_scores[i].confidence < 0.7) {
+                confidence_boost *= 0.5;  // 50% penalty for low confidence matches
+            }
             
             double combined_weight = position_weight * severity_weight * confidence_boost;
             
