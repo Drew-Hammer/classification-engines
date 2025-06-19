@@ -15,7 +15,6 @@ const std::map<std::string, double> CATEGORY_SEVERITY = {
     {"Data Security", 0.90},         
     {"Vulnerability", 0.85},         
     {"System Compromise", 0.85},    
-    {"Web Security", 0.85},          
     
     // HIGH (0.75-0.84) - Direct security threat
     {"Attack", 0.80},
@@ -24,6 +23,7 @@ const std::map<std::string, double> CATEGORY_SEVERITY = {
     {"Lateral Movement", 0.80},     
     
     // SIGNIFICANT (0.65-0.74) - Major security component
+    {"Web Security", 0.71},          
     {"API Security", 0.70},
     {"Container Security", 0.70},     
     {"Cloud Security", 0.70},
