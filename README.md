@@ -10,16 +10,31 @@ This project implements a fast and efficient classification system that uses Fas
 - Support for top-k similar matches
 - Fast cosine similarity comparison
 - C++17 implementation for high performance
+- Security-focused classification with severity scoring
+- Extensive security term categorization
 
 ## Prerequisites
 
-- C++17 compatible compiler
+- C++17 compatible compiler (g++)
 - Git (for fetching FastText dependency)
 
-## Building the Project
+## Building and Testing the Project
+
+The project uses a Makefile for building and testing. Here are the available commands:
 
 ```bash
-# Compile the classifier
+# Build the classifier
+make
+
+# Run the tests
+make test
+
+# Clean build artifacts
+make clean
+```
+
+Alternatively, you can build manually with:
+```bash
 g++ -std=c++17 src/test_engine.cpp src/classification_engine.cpp src/Classifier.cpp src/TextProcessor.cpp -o test_engine
 ```
 
@@ -31,7 +46,7 @@ Before using the classifier, you'll need a pre-trained FastText model. You can e
 
 ### Running the Example
 
-The example program demonstrates how to use the classifier with some sample classifications:
+The example program demonstrates how to use the classifier with sample security classifications:
 
 ```bash
 ./test_engine
@@ -61,20 +76,24 @@ std::cout << "Label: " << result.label
 auto topMatches = classifier.getTopKMatches("input string", 3);
 ```
 
+## Security Categories
+
+The classifier includes comprehensive security categories with severity scoring:
+
+- CRITICAL (0.85-0.95): Immediate system compromise or data breach risks
+- HIGH (0.75-0.84): Direct security threats
+- SIGNIFICANT (0.65-0.74): Major security components
+- MEDIUM (0.55-0.64): Important security concerns
+
+Each category includes extensive keyword matching and context-aware classification.
+
 ## Performance Considerations
 
 - Reference embeddings are pre-computed and cached for faster classification
 - Uses efficient cosine similarity calculation
 - Minimal memory allocations during classification
 - Thread-safe classification (after initialization)
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-# Security Term Classifier
-
-A C++ application for classifying security-related terms and phrases with severity scoring.
+- Optimized text processing with camelCase word splitting
 
 ## Version Control Notes
 
@@ -120,11 +139,13 @@ mkdir -p models
 cp /path/to/your/security_model.bin models/
 ```
 
-2. Configuration
+2. Build and Test
 ```bash
-# Create local config (if needed)
-cp config.example.json config.local.json
-# Edit config.local.json with your settings
+# Build the classifier
+make
+
+# Run the tests
+make test
 ```
 
 ### Maintaining Clean Version Control
