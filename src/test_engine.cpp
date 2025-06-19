@@ -17,7 +17,9 @@ int main() {
         "SQL injection attempt",
         "password expired",
         "network firewall",
-        "2FA authentication failed"
+        "2FA authentication failed",
+        "vulnerability detected",
+        "logging issues"
     };
     
     std::cout << "Testing Classification Engine\n";

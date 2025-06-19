@@ -237,7 +237,9 @@ SecurityClassification Classifier::classifyWord(const std::string& phrase, float
     if (!result.all_scores.empty()) {
         result.category = result.all_scores[0].category;
         result.confidence = result.all_scores[0].confidence;
+        result.severity = result.all_scores[0].severity;
         
+        /* Commenting out weighted average calculation
         // Calculate weighted average severity from top 3 categories
         double total_weighted_severity = 0.0;
         double total_weights = 0.0;
@@ -263,6 +265,7 @@ SecurityClassification Classifier::classifyWord(const std::string& phrase, float
         // Set final severity with 3 decimal places precision
         result.severity = total_weights > 0.0 ? 
             std::round((total_weighted_severity / total_weights) * 1000.0) / 1000.0 : 0.0;
+        */
     }
 
     return result;
