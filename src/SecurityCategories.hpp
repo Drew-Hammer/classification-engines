@@ -9,24 +9,28 @@ namespace security {
 // Severity scores for each category (0.1 to 0.9)
 const std::map<std::string, double> CATEGORY_SEVERITY = {
     // CRITICAL (0.85-0.95) - Immediate system compromise or data breach risk
-    {"Privilege Escalation", 0.95},  // Highest - direct system compromise
-    {"Access Control", 0.90},        // Critical access control
-    {"Identity & Access Management", 0.90},  // Critical identity management
-    {"Data Security", 0.90},         // Moved up - data breaches are critical
-    {"Vulnerability", 0.85},         // Critical vulnerabilities
+    {"Privilege Escalation", 0.95},  
+    {"Access Control", 0.90},       
+    {"Identity & Access Management", 0.90},  
+    {"Data Security", 0.90},         
+    {"Vulnerability", 0.85},         
+    {"System Compromise", 0.85},    
+    {"Web Security", 0.85},          
     
     // HIGH (0.75-0.84) - Direct security threat
     {"Attack", 0.80},
     {"Authentication", 0.80},
-    {"Web Security", 0.80},          // Moved up - web attacks are serious
     {"Cryptography", 0.80},
+    {"Lateral Movement", 0.80},     
     
     // SIGNIFICANT (0.65-0.74) - Major security component
     {"API Security", 0.70},
-    {"Container Security", 0.70},     // Container escapes are significant
+    {"Container Security", 0.70},     
     {"Cloud Security", 0.70},
-    {"Network Security", 0.70},       // Network attacks are significant
+    {"Network Security", 0.70},       
     {"DevOps Security", 0.65},
+    {"Defense Evasion", 0.70},      
+    {"Service Availability", 0.65},  
     
     // MEDIUM (0.55-0.64) - Important security concerns
     {"Zero Trust", 0.60},
@@ -78,8 +82,10 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
     }},
 
     {"Web Security", {
-        "web app security", "csrf prevention", "xss protection", "sql injection",
-        "code execution", "remote code execution", "command execution",
+        "web application security", "web app security", "web security", "application security",
+        "web vulnerability", "web app vulnerability", "application vulnerability",
+        "csrf prevention", "xss protection", "sql injection", "command injection",
+        "code execution", "remote code execution", "command execution", "rce vulnerability",
         "open redirect protection", "cookie theft prevention", "session hijacking",
         "session fixation", "content security policy", "csp implementation", 
         "cors configuration", "reflected xss prevention", "stored xss detection", 
@@ -89,7 +95,10 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "ssrf prevention", "subdomain takeover prevention", "security.txt implementation", 
         "security misconfiguration", "robots.txt security", ".env leak prevention", 
         "admin panel security", "webshell detection", "htaccess security", 
-        "parameter pollution prevention", "session management", "cookie security"
+        "parameter pollution prevention", "session management", "cookie security",
+        "web server security", "web server vulnerability", "web server compromise",
+        "web application firewall", "waf bypass", "web cache poisoning",
+        "web service security", "web api security", "web endpoint security"
     }},
 
     {"Incident Response", {
@@ -154,7 +163,12 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "address spoofing", "denial of service", "distributed dos", "ssl certificate", 
         "tls protocol", "port exposure", "encrypted tunnel", "secure remote access", 
         "encrypted connection", "secure channel", "network monitoring", "remote shell security", 
-        "icmp flood", "packet filtering", "network latency", "qos policy"
+        "icmp flood", "packet filtering", "network latency", "qos policy",
+        "network pivot", "lateral movement", "network traversal", "network penetration",
+        "internal network access", "network zone breach", "network segment compromise",
+        "cross-network movement", "network access escalation", "unauthorized network movement",
+        "network bridge compromise", "dmz breach", "internal zone access", "network hop",
+        "network jump point", "pivot point compromise"
     }},
 
     {"Cloud Security", {
@@ -417,6 +431,64 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "modsecurity setup", "signature rule management", "payload filtering",
         "web protection system", "application filtering", "sql injection blocking",
         "xss filtering", "http anomaly detection"
+    }},
+
+    {"System Compromise", {
+        "system breach", "system takeover", "host compromise", "server compromise",
+        "system control", "remote system access", "unauthorized system access",
+        "system infiltration", "compromised host", "compromised server",
+        "system security breach", "system integrity loss", "system control gain",
+        "unauthorized control", "system access gain", "privileged system access",
+        "system security compromise", "system exploitation", "system penetration",
+        "complete system access", "system ownership", "root access gained",
+        "administrator access gained", "system command execution", "system shell access",
+        "system backdoor", "persistent system access", "system control maintained",
+        "compromised system pivot", "system security bypass"
+    }},
+
+    {"Defense Evasion", {
+        "monitoring bypass", "detection evasion", "security control bypass",
+        "defense circumvention", "security evasion", "monitoring evasion",
+        "stealth technique", "hidden access", "covert channel", "evasion technique",
+        "security tool bypass", "antivirus evasion", "ids evasion", "ips bypass",
+        "logging evasion", "audit evasion", "forensics evasion", "trace removal",
+        "evidence cleanup", "activity masking", "defense layer bypass",
+        "security product disable", "monitoring disable", "defense mechanism disable",
+        "security tool tampering", "defense system compromise", "security agent disable",
+        "detection system bypass", "security sensor blind", "defense layer penetration",
+        "security control disable", "monitoring system bypass", "security monitoring blind"
+    }},
+
+    {"Service Availability", {
+        // Core service states
+        "service status", "service state", "service availability", "service disruption",
+        "service outage", "service downtime", "service interruption", "service degradation",
+        "service offline", "service disabled", "service stopped", "service failure",
+        
+        // Specific service types
+        "web service status", "database service", "file service", "smb service",
+        "network service", "dns service", "email service", "authentication service",
+        "api service", "proxy service", "cache service", "queue service",
+        
+        // Port and protocol states
+        "port status", "port availability", "port state", "port access",
+        "protocol availability", "protocol state", "protocol access",
+        "tcp port", "udp port", "service port", "listening port",
+        
+        // Impact descriptions
+        "service impact", "service affected", "service compromised",
+        "service unreachable", "service inaccessible", "service unstable",
+        "service performance", "service response", "service latency",
+        
+        // Administrative actions
+        "service shutdown", "service restart", "service suspension",
+        "service maintenance", "service configuration", "service settings",
+        "service modification", "service control", "service management",
+        
+        // Availability metrics
+        "uptime impact", "availability loss", "service level",
+        "performance degradation", "response time", "throughput reduction",
+        "capacity impact", "bandwidth impact", "resource availability"
     }}
 };
 

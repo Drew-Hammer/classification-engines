@@ -44,6 +44,16 @@ double classifyText(const std::string& text, const std::string& model_dir) {
     // Classify the text
     auto result = classifier.classifyWord(text);
     
+    // Print individual category scores
+    // std::cout << "Category Scores:" << std::endl;
+    // std::cout << std::string(50, '-') << std::endl;
+    // for (const auto& score : result.all_scores) {
+    //     std::cout << std::left << std::setw(30) << score.category 
+    //               << "| Severity: " << std::fixed << std::setprecision(3) 
+    //               << score.severity << " | Confidence: " << score.confidence << std::endl;
+    // }
+    // std::cout << std::string(50, '-') << std::endl;
+    
     // Calculate weighted average severity from top 3 categories
     double total_weighted_severity = 0.0;
     double total_weights = 0.0;

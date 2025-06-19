@@ -182,25 +182,29 @@ SecurityClassification Classifier::classifyWord(const std::string& phrase, float
         }
     }
     
-    // First try exact matches with all variations
-    bool exact_match_found = false;
+    // First try exact matches
+    int exact_matches = 0;
     for (const auto& word : combinations) {
         for (const auto& [category, keywords] : CATEGORY_KEYWORDS) {
             if (std::find(keywords.begin(), keywords.end(), word) != keywords.end()) {
                 category_scores[category].confidence = 1.0f;
                 category_scores[category].matching_terms.push_back({word, 1.0f});
-                exact_match_found = true;
+                exact_matches++;
             }
         }
     }
     
-    if (!exact_match_found) {
-        // Try similarity matching
+    // If we don't have enough exact matches, try semantic matches with a higher threshold
+    if (exact_matches < 3) {
+        float semantic_threshold = threshold + 0.2f;  // Increase threshold for semantic matches
         for (const auto& word : combinations) {
             for (const auto& [category, keywords] : CATEGORY_KEYWORDS) {
+                // Skip categories that already have exact matches
+                if (category_scores[category].confidence == 1.0f) continue;
+                
                 for (const auto& keyword : keywords) {
                     float sim = getSimilarity(word, keyword);
-                    if (sim > threshold) {
+                    if (sim > semantic_threshold) {
                         auto& cat_score = category_scores[category];
                         cat_score.matching_terms.push_back({keyword, sim});
                         cat_score.confidence = std::max(cat_score.confidence, sim);
@@ -238,34 +242,6 @@ SecurityClassification Classifier::classifyWord(const std::string& phrase, float
         result.category = result.all_scores[0].category;
         result.confidence = result.all_scores[0].confidence;
         result.severity = result.all_scores[0].severity;
-        
-        /* Commenting out weighted average calculation
-        // Calculate weighted average severity from top 3 categories
-        double total_weighted_severity = 0.0;
-        double total_weights = 0.0;
-        
-        for (size_t i = 0; i < std::min(size_t(3), result.all_scores.size()); ++i) {
-            if (result.all_scores[i].confidence > 0.0f) {
-                // Much more aggressive position weighting: 1.0, 0.5, 0.25 for positions 0,1,2
-                double position_weight = std::pow(0.5, i);  // Exponential decay
-                
-                // Square the severity to make high severities much more impactful
-                double severity_weight = std::pow(result.all_scores[i].severity, 2.0);
-                
-                // Multiply confidence into the weight to further emphasize strong matches
-                double confidence_boost = std::pow(result.all_scores[i].confidence, 1.5);
-                
-                double combined_weight = position_weight * severity_weight * confidence_boost;
-                
-                total_weighted_severity += result.all_scores[i].severity * combined_weight;
-                total_weights += combined_weight;
-            }
-        }
-        
-        // Set final severity with 3 decimal places precision
-        result.severity = total_weights > 0.0 ? 
-            std::round((total_weighted_severity / total_weights) * 1000.0) / 1000.0 : 0.0;
-        */
     }
 
     return result;
