@@ -114,6 +114,46 @@ const std::map<std::string, std::string> TextProcessor::IRREGULAR_VERBS = {
     {"left", "leave"}
 };
 
+// Define security-related neutral words that should be discounted
+const std::set<std::string> TextProcessor::NEUTRAL_WORDS = {
+    // Common but non-specific security terms
+    "security",
+    "attack",
+    "threat",
+    "risk",
+    "problem",
+    "issue",
+    "vulnerability",
+    "issue",
+    "incident",
+    "event",
+    "alert",
+    "warning",
+    "error",
+    "breach",
+    "security",
+    "compromise",
+    "access",
+    "protection",
+    "defense",
+    "detect",
+    "prevent",
+    "block",
+    "filter",
+    "check",
+    "report",
+    "policy",
+    "rule",
+    "requirement",
+    "compliance",
+    "standard",
+    "protocol",
+    "procedure",
+    "measure",
+    "mechanism",
+    "solution"
+};
+
 std::string TextProcessor::normalize(const std::string& text) {
     std::string result;
     result.reserve(text.length());
@@ -412,4 +452,17 @@ std::vector<std::string> TextProcessor::getAllWordCombinations(const std::string
     combinations.erase(std::unique(combinations.begin(), combinations.end()), combinations.end());
     
     return combinations;
+}
+
+bool TextProcessor::isNeutralWord(const std::string& word) {
+    std::string normalized = normalize(word);
+    
+    // Check direct match in neutral words
+    if (NEUTRAL_WORDS.find(normalized) != NEUTRAL_WORDS.end()) {
+        return true;
+    }
+    
+    // Check lemmatized form
+    std::string lemma = lemmatize(normalized);
+    return NEUTRAL_WORDS.find(lemma) != NEUTRAL_WORDS.end();
 } 

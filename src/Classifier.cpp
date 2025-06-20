@@ -171,6 +171,21 @@ SecurityClassification Classifier::classifyWord(const std::string& phrase, float
     // Get all possible variations of the input phrase
     auto combinations = TextProcessor::getAllWordCombinations(phrase);
     
+    // Remove or discount bland words
+    combinations.erase(
+        std::remove_if(combinations.begin(), combinations.end(),
+            [](const std::string& word) {
+                return TextProcessor::isNeutralWord(word);
+            }
+        ),
+        combinations.end()
+    );
+    
+    // If all words were bland, add back the original phrase to avoid empty analysis
+    if (combinations.empty()) {
+        combinations.push_back(phrase);
+    }
+    
     // Track scores for each category
     std::map<std::string, CategoryScore> category_scores;
     for (const auto& [category, _] : CATEGORY_KEYWORDS) {

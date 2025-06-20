@@ -23,7 +23,6 @@ const std::map<std::string, double> CATEGORY_SEVERITY = {
     {"Lateral Movement", 0.80},     
     
     // SIGNIFICANT (0.65-0.74) - Major security component
-    {"Web Security", 0.71},          
     {"API Security", 0.70},
     {"Container Security", 0.70},     
     {"Cloud Security", 0.70},
@@ -33,35 +32,29 @@ const std::map<std::string, double> CATEGORY_SEVERITY = {
     {"Service Availability", 0.65},  
     
     // MEDIUM (0.55-0.64) - Important security concerns
+    {"Web Security", 0.61},          
     {"Zero Trust", 0.60},
     {"Storage Security", 0.55},
     {"Insider Threats", 0.55},
     
     // MODERATE (0.45-0.54) - Significant but not critical
-    {"Mobile Security", 0.50},
-    {"Supply Chain", 0.50},
     {"Threat Intelligence", 0.50},
     {"Infrastructure", 0.45},
     {"Orchestration Security", 0.45},
     
     // STANDARD (0.35-0.44) - Standard security measures
     {"Defense", 0.40},
-    {"SIEM", 0.40},
     {"Incident Response", 0.40},
     {"Security Architecture", 0.40},
     {"DDoS Protection", 0.35},
     {"Web Application Firewall", 0.35},
     
     // BASELINE (0.25-0.34) - Important but lower risk
-    {"Red Teaming", 0.30},
-    {"Blue Teaming", 0.30},
     {"Patch Management", 0.30},
     {"Configuration Management", 0.30},
     {"Physical Security", 0.25},
     
     // LOW (0.15-0.24) - Supporting security functions
-    {"Bug Bounty", 0.20},
-    {"Social Engineering", 0.20},
     {"Logging & Auditing", 0.15},
     {"Compliance", 0.15}
 };
@@ -75,30 +68,30 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "classified information", "restricted access", "secret management", "proprietary information", 
         "data confidentiality", "data integrity", "data availability", "secure backup", 
         "database security", "dataset protection", "record security", "pii protection", 
-        "phi security", "data leak prevention", "security breach", "data tokenization", 
-        "data masking", "data pseudonymization", "data loss prevention", "data exfiltration", 
+        "phi security", "data leak", "security breach", "data tokenization", 
+        "data masking", "data pseudonymization", "data loss", "data exfiltration", 
         "cloud storage security", "s3 security", "data integrity check", "data privacy control", 
         "data retention policy", "data at rest", "data in transit"
     }},
 
     {"Web Security", {
-        "web application security", "web app security", "web security", "application security",
-        "web vulnerability", "web app vulnerability", "application vulnerability",
-        "csrf prevention", "xss protection", "sql injection", "command injection",
+        "web application", "web app", "web vulnerability",
+        "web app vulnerability", "application vulnerability",
+        "csrf", "xss", "sql injection", "command injection",
         "code execution", "remote code execution", "command execution", "rce vulnerability",
-        "open redirect protection", "cookie theft prevention", "session hijacking",
-        "session fixation", "content security policy", "csp implementation", 
-        "cors configuration", "reflected xss prevention", "stored xss detection", 
-        "dom xss protection", "iframe injection prevention", "clickjacking protection", 
-        "input validation", "output encoding", "secure headers implementation", 
-        "path traversal prevention", "lfi protection", "rfi detection", 
-        "ssrf prevention", "subdomain takeover prevention", "security.txt implementation", 
-        "security misconfiguration", "robots.txt security", ".env leak prevention", 
-        "admin panel security", "webshell detection", "htaccess security", 
-        "parameter pollution prevention", "session management", "cookie security",
-        "web server security", "web server vulnerability", "web server compromise",
+        "open redirect protection", "cookie theft", "session hijacking",
+        "session fixation", "content security policy", "csp", 
+        "cors configuration", "reflected xss", "stored xss", 
+        "dom xss", "iframe injection", "clickjacking", 
+        "input validation", "output encoding", "secure headers", 
+        "path traversal", "lfi", "rfi", 
+        "ssrf", "subdomain takeover", "security.txt", 
+        "misconfiguration", "robots.txt", ".env leak", 
+        "admin panel", "webshell", "htaccess", 
+        "parameter pollution", "session management", "cookie",
+        "web server", "web server vulnerability", "web server compromise",
         "web application firewall", "waf bypass", "web cache poisoning",
-        "web service security", "web api security", "web endpoint security"
+        "web service", "web api", "web endpoint"
     }},
 
     {"Incident Response", {
@@ -147,123 +140,155 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
     }},
 
     {"API Security", {
-        "api gateway", "rate limiting", "unauthorized access", "token leakage", "broken authentication", 
+        "api gateway", "rate limit", "unauthorized access", "token leakage", "broken authentication", 
         "object injection", "parameter tampering", "excessive data exposure", "api injection", 
-        "rate limit bypass", "api key management", "broken object authorization", 
-        "endpoint enumeration", "api abuse prevention", "client-side validation", 
-        "replay attack prevention", "csrf token validation", "api fuzzing test"
+        "rate limit bypass", "api key", "broken object authorization", 
+        "endpoint enumeration", "api abuse", "client-side validation", 
+        "replay attack", "csrf token validation", "api fuzzing"
     }},
 
     {"Network Security", {
-        "firewall configuration", "router setup", "network switch", 
-        "traffic analysis", "protocol violation", "interface monitoring",
-        "gateway security", "dns security", "vpn tunnel", "proxy server", "nat configuration",
-        "vlan segmentation", "network perimeter", "intrusion detection", "traffic egress", 
-        "traffic ingress", "man-in-the-middle attack", "wireless ssid", 
-        "address spoofing", "denial of service", "distributed dos", "ssl certificate", 
-        "tls protocol", "port exposure", "encrypted tunnel", "secure remote access", 
-        "encrypted connection", "secure channel", "network monitoring", "remote shell security", 
-        "icmp flood", "packet filtering", "network latency", "qos policy",
-        "network pivot", "lateral movement", "network traversal", "network penetration",
-        "internal network access", "network zone breach", "network segment compromise",
-        "cross-network movement", "network access escalation", "unauthorized network movement",
-        "network bridge compromise", "dmz breach", "internal zone access", "network hop",
-        "network jump point", "pivot point compromise"
+        // Network Access Violations
+        "ssh brute force attempt", "ftp credential stuffing",
+        "smb null session exploit", "rdp authentication bypass",
+        "telnet backdoor access", "vpn tunnel hijack",
+        
+        // Network Traffic Attacks
+        "tcp syn flood", "udp amplification",
+        "icmp smurf attack", "dns reflection",
+        "arp cache poison", "mac address spoof",
+        
+        // Data Exfiltration Methods
+        "dns tunneling", "https data smuggling",
+        "icmp covert channel", "tcp reverse shell",
+        "smtp data leak", "ftp binary transfer",
+        
+        // Active Reconnaissance
+        "tcp port sweep", "udp service scan",
+        "os fingerprint probe", "smb share enumeration",
+        "snmp walk attempt", "dns zone transfer",
+        
+        // Protocol Exploitation
+        "ssl heartbleed exploit", "smb eternal blue",
+        "dns cache poison", "ldap injection",
+        "smtp command inject", "http method tamper",
+        
+        // Infrastructure Breach
+        "vlan hop attack", "router acl bypass",
+        "firewall rule evade", "nat bypass attempt",
+        "dmz boundary leap", "proxy chain break",
+        
+        // Service Disruption
+        "http flood attack", "dns amplification",
+        "tcp rst injection", "ssl renegotiation",
+        "bgp route hijack", "dhcp starvation"
+    }},
+
+    {"Network Traffic Analysis", {
+        // Traffic Capture and Monitoring
+        "network traffic captured", "packet capture recorded",
+        "network flow logged", "traffic analysis performed",
+        "packet inspection performed", "deep packet inspection result",
+        
+        // Traffic Patterns
+        "traffic pattern identified", "traffic baseline deviation",
+        "traffic anomaly detected", "traffic signature matched",
+        "traffic correlation found", "traffic behavior change",
+        
+        // Protocol Analysis
+        "protocol violation found", "protocol anomaly detected",
+        "protocol mismatch identified", "protocol abuse pattern",
+        "protocol manipulation found", "protocol exploit attempt",
+        
+        // Network Flow Analysis
+        "suspicious flow pattern", "abnormal flow volume",
+        "unusual flow direction", "flow correlation detected",
+        "flow timing anomaly", "flow size anomaly",
+        
+        // Packet Analysis
+        "malformed packet found", "packet header anomaly",
+        "packet payload anomaly", "packet sequence anomaly",
+        "packet timing anomaly", "packet size anomaly",
+        
+        // Traffic Classification
+        "malicious traffic identified", "command and control traffic",
+        "data exfiltration traffic", "tunneled traffic detected",
+        "encrypted traffic anomaly", "covert channel traffic"
     }},
 
     {"Cloud Security", {
-        "aws configuration", "azure setup", "gcp security", "iam policy", "cloud trail audit", 
-        "s3 bucket exposure", "object storage security", "cloud function security", 
-        "lambda configuration", "cloudwatch monitoring", "misconfigured bucket", 
-        "cloud identity management", "secrets manager setup", "cloud credentials exposure", 
-        "public bucket access", "account compromise detection", "cloud-native security", 
-        "instance metadata service", "shared responsibility model", "cloud api security", 
-        "cloud config management", "cloud perimeter security", "cloud misconfiguration"
+        "aws", "azure", "gcp", "iam policy", "cloud trail", 
+        "s3 bucket exposure", "object storage", "cloud function", 
+        "lambda", "cloudwatch", "misconfigured bucket", 
+        "cloud identity", "secrets manager", "cloud credentials", 
+        "public bucket", "account compromise", "cloud-native", 
+        "instance metadata", "shared responsibility", "cloud api", 
+        "cloud config", "cloud perimeter", "cloud misconfiguration"
     }},
 
     {"Container Security", {
-        "docker security", "container image", "registry access", "container runtime", 
-        "container escape prevention", "privileged container access", "insecure image detection", 
-        "malicious image scan", "container vulnerability scan", "container isolation", 
-        "runC vulnerability", "namespace security", "cgroups configuration", "volume mount security",
-        "container exploit prevention", "entrypoint abuse prevention", "exposed docker daemon", 
-        "overlay filesystem security"
+        "docker", "container image", "registry access", "container runtime", 
+        "container escape", "privileged container", "insecure image",
+        "malicious image", "container vulnerability", "container isolation",
+        "runC vulnerability", "namespace", "cgroups", "volume mount",
+        "container exploit", "entrypoint abuse", "exposed docker daemon", 
+        "overlay filesystem"
     }},
 
     {"Storage Security", {
-        "object storage protection", "blob storage security", "disk encryption", 
-        "volume security", "mount protection", "storage access control",
-        "encryption at rest", "storage leak prevention", "shared volume security", 
-        "storage exposure prevention", "unsecured disk detection", "cloud storage security", 
-        "efs protection", "nfs security", "block device encryption", "misconfigured share detection", 
-        "raid configuration"
+        "object storage", "blob storage", "disk encryption", 
+        "volume", "mount", "storage access",
+        "encryption at rest", "storage leak", "shared volume", 
+        "storage exposure", "unsecured disk", "cloud storage", 
+        "efs", "nfs", "block device encryption", "misconfigured share", 
+        "raid"
     }},
 
     {"Infrastructure", {
-        "system hardening", "server security", "host protection", "endpoint security", 
-        "workstation hardening", "device protection", "hardware security", "software protection",
-        "application security", "service hardening", "platform security", "cloud infrastructure",
-        "container security", "virtual environment", "physical security", "asset management", 
-        "kernel hardening", "microservice security", "hypervisor protection", "runtime security",
-        "kubernetes security", "ci/cd pipeline", "availability zone", "data center security",
-        "fleet management", "scaling configuration", "deployment security", "vm protection", 
-        "bare metal security", "cluster security", "node protection"
+        "system", "server", "host", "endpoint", 
+        "workstation", "device", "hardware", "software",
+        "application", "service", "platform", "cloud",
+        "container", "virtual environment", "physical", "asset", 
+        "kernel", "microservice", "hypervisor", "runtime",
+        "kubernetes", "ci/cd pipeline", "availability zone", "data center",
+        "fleet", "scaling", "deployment", "vm", 
+        "bare metal", "cluster", "node"
     }},
 
     {"Defense", {
-        "firewall implementation", "encryption system", "authentication mechanism", 
-        "authorization system", "patch management", "security update", "backup system", 
-        "security monitoring", "threat detection", "intrusion prevention", "system protection", 
-        "security control", "system hardening", "security remediation", "patch deployment", 
-        "sandbox environment", "zero trust architecture", "rate limiting implementation",
-        "network segmentation", "honeytoken deployment", "system resilience", 
-        "heuristic analysis", "behavioral detection", "anomaly detection", 
-        "signature-based detection", "intrusion prevention system", "active defense mechanism"
+        "firewall", "encryption", "authentication", 
+        "authorization", "patch", "update", "backup", 
+        "monitoring", "threat detection", "intrusion", "protection", 
+        "control", "hardening", "remediation", "patch", 
+        "sandbox", "zero trust", "rate limit", "throttling",
+        "load balancer", "cloudflare", "akamai", "traffic spike", "http flood",
+        "amplification", "botnet", "reflected attack", "volumetric attack", "application-layer",
+        "ddos appliance"
     }},
     
     {"DevOps Security", {
-        "ci/cd security", "pipeline security", "build process security", "code signing process",
-        "pipeline abuse prevention", "source control security", "github security", "gitlab protection",
-        "bitbucket security", "repository hardening", "commit signing", "secrets scanning",
-        "cicd credential management", "workflow security", "build server protection", 
-        "artifact injection prevention", "script injection prevention", "automation security",
-        "deployment pipeline security", "runner security", "self-hosted runner protection",
-        "pipeline token management", "ci leak prevention", "git secret scanning",
+        "ci/cd", "pipeline", "build process", "code signing",
+        "pipeline abuse", "source control", "github", "gitlab",
+        "bitbucket", "repository", "commit signing", "secrets scanning",
+        "cicd credential", "workflow", "build server", 
+        "artifact injection", "script injection", "automation",
+        "deployment pipeline", "runner", "self-hosted runner",
+        "pipeline token", "ci leak", "git secret",
         "devops", "pipeline", "cicd", "jenkins", "gitlab", "github", "bitbucket",
         "repository", "build", "deploy", "automation", "artifact", "workflow",
         "continuous", "integration", "delivery", "deployment",
-        "security issue", "security risk", "security vulnerability", "security breach",
-        "security incident", "security concern", "security problem"
+        "issue", "risk", "vulnerability", "breach",
+        "incident", "concern", "problem"
     }},
 
     {"Orchestration Security", {
-        "kubernetes security", "k8s hardening", "pod security", "deployment protection", 
-        "cluster security", "node protection", "service account management",
-        "role binding configuration", "rbac implementation", "etcd security", "helm security", 
-        "ingress protection", "network policy enforcement", "container orchestration security",
-        "configmap protection", "secrets management", "kubelet security", "api server protection",
-        "cluster-admin restriction", "namespace isolation", "misconfigured cluster detection",
-        "dashboard security", "cni plugin security", "kubeconfig management"
-    }},
-
-    {"Supply Chain", {
-        "dependency scanning", "supply chain security", "third party assessment", 
-        "vendor security", "software supplier verification", "code injection prevention", 
-        "package hijacking prevention", "dependency confusion prevention", "typosquatting protection",
-        "malicious library detection", "signed malware detection", "trust relationship verification", 
-        "open source risk assessment", "sbom management", "software bill of materials", 
-        "supplier compromise detection", "artifact integrity verification",
-        "npm package security", "pip package verification", "malicious commit detection", 
-        "cicd compromise prevention"
-    }},
-
-    {"Social Engineering", {
-        "phishing prevention", "vishing detection", "smishing protection", "pretexting awareness",
-        "baiting prevention", "impersonation detection", "social engineering awareness", 
-        "manipulation prevention", "deception detection", "fraud prevention",
-        "scam awareness", "fake identity detection", "trust exploitation", "coercion prevention",
-        "tailgating prevention", "usb drop awareness", "email fraud detection", 
-        "voice scam prevention", "spoof call detection", "impersonation prevention"
+        "kubernetes", "k8s", "pod", "deployment", 
+        "cluster", "node", "service account",
+        "role binding", "rbac", "etcd", "helm", 
+        "ingress", "network policy", "container orchestration",
+        "configmap", "secrets", "kubelet", "api server",
+        "cluster-admin", "namespace isolation", "misconfigured cluster",
+        "dashboard", "cni plugin", "kubeconfig"
     }},
 
     {"Configuration Management", {
@@ -288,52 +313,26 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "port scan", "port scanning", "scan port", "network scan"
     }},
 
-    {"Compliance", {
-        "compliance monitoring", "regulation adherence", "standard implementation", 
-        "policy enforcement", "requirement validation", "audit preparation",
-        "assessment process", "certification process", "accreditation management", 
-        "governance framework", "control implementation", "guideline enforcement", 
-        "procedure documentation", "baseline configuration", "benchmark assessment", 
-        "best-practice implementation", "documentation management", "sox compliance", 
-        "gdpr compliance", "hipaa compliance", "pci compliance", "nist framework", 
-        "iso certification", "fedramp authorization", "cmmc certification", "cobit framework",
-        "risk acceptance", "evidence collection", "compliance reporting", "gap analysis",
-        "conformance check", "compliance verification", "compliance audit"
-    }},
-
     {"Privilege Escalation", {
         "privilege escalation detection", "root access control", "admin rights management", 
         "privilege elevation", "unauthorized privilege access", "access control bypass", 
-        "sudo abuse prevention", "privilege bypass detection", "runas restriction",
-        "setuid control", "token theft prevention", "user impersonation", "capability abuse",
-        "permission elevation detection", "dll injection prevention", "service misconfiguration",
-        "cron job abuse prevention", "domain admin", "domain administrator", "domain controller",
+        "sudo abuse", "privilege bypass", "runas restriction",
+        "setuid control", "token theft", "user impersonation", "capability abuse",
+        "permission elevation", "dll injection", "service misconfiguration",
+        "cron job abuse", "domain admin", "domain administrator", "domain controller",
         "privileged domain", "administrative domain", "admin privileges"
     }},
 
     {"Cryptography", {
-        "encryption protocol", "decryption process", "cipher implementation", "aes encryption",
-        "rsa algorithm", "ecc implementation", "key exchange protocol", "symmetric encryption",
-        "asymmetric encryption", "hash function", "sha256 implementation", "digital signature",
+        "encryption protocol", "decryption process", "cipher", "aes encryption",
+        "rsa algorithm", "ecc", "key exchange protocol", "symmetric encryption",
+        "asymmetric encryption", "hash function", "sha256", "digital signature",
         "key pair management", "keystore security", "certificate management", "tls protocol",
         "ssl configuration", "secure channel setup", "encryption key management", 
         "public key infrastructure", "private key protection", "key rotation policy", 
-        "hmac validation", "pbkdf2 implementation", "bcrypt usage", "scrypt configuration",
-        "padding oracle prevention", "nonce generation", "iv management", "cbc mode",
-        "gcm implementation", "crypto library security", "ssl pinning implementation"
-    }},
-
-    {"Mobile Security", {
-        "mobile app security", "android protection", "ios security", "apk analysis", 
-        "ipa verification", "app security assessment", "mobile app hardening",
-        "root detection", "jailbreak detection", "mobile malware prevention", 
-        "sms spoofing prevention", "app tampering detection", "app wrapping implementation",
-        "mobile device management", "mdm configuration", "secure enclave implementation",
-        "biometric authentication", "face id security", "touch id verification", 
-        "insecure storage detection", "deeplink protection", "intent hijacking prevention",
-        "mobile threat detection", "apktool analysis", "frida detection", "code obfuscation",
-        "reverse engineering prevention", "debug protection", "dynamic analysis prevention",
-        "static analysis detection"
+        "hmac validation", "pbkdf2", "bcrypt usage", "scrypt",
+        "padding oracle", "nonce generation", "iv management", "cbc mode",
+        "gcm", "crypto library security", "ssl pinning"
     }},
 
     {"Physical Security", {
@@ -356,94 +355,71 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "threat signature", "hash verification", "ip reputation", "domain reputation"
     }},
 
-    {"SIEM", {
-        "log correlation", "alert rule configuration", "dashboard management", 
-        "kibana implementation", "splunk deployment", "elasticsearch configuration",
-        "log indexing", "log ingestion", "security event monitoring", "alert tuning",
-        "event normalization", "log forwarding setup", "log aggregation", 
-        "event management system", "log retention policy", "dashboard configuration",
-        "alert fatigue management", "data enrichment", "log parsing rules"
-    }},
-
     {"Insider Threats", {
-        "insider threat detection", "employee monitoring", "internal threat prevention",
-        "employee risk assessment", "data theft prevention", "data leak detection",
-        "intentional breach prevention", "malicious insider detection",
-        "access abuse monitoring", "unauthorized transfer detection", "file transfer monitoring",
-        "email exfiltration prevention", "usb security", "shadow it detection",
-        "privileged account misuse", "credential sharing prevention"
+        "insider threat", "employee monitoring", "internal threat",
+        "employee risk", "data theft", "data leak",
+        "intentional breach", "malicious insider",
+        "access abuse monitoring", "unauthorized transfer", "file transfer monitoring",
+        "email exfiltration", "usb security", "shadow it",
+        "privileged account misuse", "credential sharing"
     }},
 
     {"Zero Trust", {
-        "zero trust architecture", "trust verification", "microsegmentation implementation",
-        "least privilege enforcement", "explicit verification", "breach assumption",
+        "zero trust architecture", "trust verification", "microsegmentation",
+        "least privilege", "explicit verification", "breach assumption",
         "identity-centric security", "continuous authentication", "context-aware access",
-        "network isolation", "zero trust implementation", "zta deployment",
-        "zero trust model implementation"
+        "network isolation", "zero trust", "zta deployment",
+        "zero trust model"
     }},
 
     {"Patch Management", {
-        "patch deployment", "system update", "system upgrade", "hotfix implementation",
-        "security patch management", "version control", "patch cycle management",
-        "software update process", "firmware update procedure", "patch tuesday planning",
-        "critical fix deployment", "vulnerability patching", "change control process",
+        "patch deployment", "system update", "system upgrade", "hotfix",
+        "security patch", "version control", "patch cycle",
+        "software update", "firmware update", "patch tuesday",
+        "critical fix", "vulnerability patching", "change control",
         "release management"
     }},
 
-    {"Red Teaming", {
-        "red team exercise", "penetration testing", "ethical hacking assessment",
-        "exploit simulation", "red team operation", "adversary emulation",
-        "attack simulation", "physical intrusion testing", "social engineering assessment",
-        "vulnerability assessment"
-    }},
-
-    {"Blue Teaming", {
-        "blue team strategy", "defensive implementation", "security monitoring",
-        "incident detection system", "response planning", "log analysis",
-        "event triage process", "network defense system", "endpoint protection",
-        "proactive defense strategy", "incident preparation"
-    }},
-
-    {"Bug Bounty", {
-        "bug bounty program", "vulnerability disclosure policy", "security researcher management",
-        "bugcrowd integration", "hackerone platform", "program policy development",
-        "responsible disclosure", "coordinated disclosure", "bounty payout",
-        "security reward", "hall of fame", "vulnerability submission", "scope definition"
-    }},
-
     {"Security Architecture", {
-        "security architecture design", "security design pattern", "threat modeling process",
-        "secure design principle", "architectural risk assessment", "security pattern implementation",
-        "reference architecture", "layered security approach", "system security modeling",
-        "architecture flaw detection", "secure component design"
+        "architecture design", "design pattern", "threat modeling",
+        "design", "architectural risk", "pattern",
+        "reference architecture", "layered", "system modeling",
+        "architecture flaw", "component design"
     }},
 
     {"DDoS Protection", {
-        "ddos mitigation", "dos prevention", "rate limiting implementation", 
-        "traffic throttling", "load balancer configuration", "cloudflare protection",
-        "akamai security", "traffic spike management", "http flood prevention",
-        "amplification protection", "botnet detection", "reflected attack prevention",
-        "volumetric attack mitigation", "application-layer protection", "ddos appliance"
+        "ddos mitigation", "dos prevention", "rate limit", "traffic throttling", "load balancer",
+        "cloudflare protection", "akamai security", "traffic spike", "http flood",
+        "amplification", "botnet", "reflected attack", "volumetric attack", "application-layer",
+        "ddos appliance"
     }},
 
     {"Web Application Firewall", {
-        "waf configuration", "waf rule implementation", "waf bypass prevention", 
-        "modsecurity setup", "signature rule management", "payload filtering",
-        "web protection system", "application filtering", "sql injection blocking",
-        "xss filtering", "http anomaly detection"
+        "waf", "waf rule", "waf bypass",
+        "modsecurity", "signature rule", "payload filtering",
+        "web protection", "application filtering", "sql injection blocking",
+        "xss filtering", "http anomaly"
     }},
 
     {"System Compromise", {
-        "system breach", "system takeover", "host compromise", "server compromise",
-        "system control", "remote system access", "unauthorized system access",
-        "system infiltration", "compromised host", "compromised server",
-        "system security breach", "system integrity loss", "system control gain",
-        "unauthorized control", "system access gain", "privileged system access",
-        "system security compromise", "system exploitation", "system penetration",
-        "complete system access", "system ownership", "root access gained",
-        "administrator access gained", "system command execution", "system shell access",
-        "system backdoor", "persistent system access", "system control maintained",
-        "compromised system pivot", "system security bypass"
+        // Privilege escalation patterns
+        "privilege escalation to root", "privilege escalation to administrator", 
+        "unauthorized root privilege obtained", "unauthorized admin privilege obtained",
+        "elevated privileges via kernel exploit", "privilege elevation via buffer overflow",
+        "remote code execution achieved", "arbitrary code execution obtained",
+        "remote command shell established", "reverse shell connection established",
+        "persistent backdoor installed", "covert command channel established",
+        "unauthorized remote access via exploit", "malicious payload execution achieved",
+        "kernel module compromise detected", "rootkit installation detected",
+        "system binary modification detected", "critical system file tampering",
+        "malicious kernel driver loaded", "system process injection detected",
+        "memory resident rootkit detected", "bootkit installation detected",
+        "firmware level compromise", "UEFI/BIOS compromise detected",
+        "hypervisor level compromise", "container escape achieved",
+        "sandbox escape detected", "VM escape achieved",
+        "lateral movement via compromised host", "privilege persistence established",
+        "system level persistence achieved", "startup process compromised",
+        "system recovery mechanism disabled", "security mechanism disabled"
     }},
 
     {"Defense Evasion", {

@@ -35,6 +35,9 @@ public:
     // Check if a string is an abbreviation
     static bool isAbbreviation(const std::string& text);
 
+    // Check if a word is bland/generic and should be discounted
+    static bool isNeutralWord(const std::string& word);
+
 private:
     // Common security-related suffixes
     static const std::vector<std::string> COMMON_SUFFIXES;
@@ -47,6 +50,9 @@ private:
     
     // Common security-related word forms
     static const std::map<std::string, std::string> SECURITY_WORD_FORMS;
+
+    // List of bland/generic words that should be discounted
+    static const std::set<std::string> NEUTRAL_WORDS;
     
     // Helper function to check if word ends with suffix
     static bool endsWith(const std::string& word, const std::string& suffix);
