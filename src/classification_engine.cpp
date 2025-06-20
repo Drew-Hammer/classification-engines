@@ -8,6 +8,9 @@
 // Static variable to store model directory
 static std::string model_directory = "../models";
 
+// Static variable for debug mode
+static bool debug_mode = false;
+
 // Function to set model directory
 void setModelDirectory(const std::string& directory) {
     model_directory = directory;
@@ -15,6 +18,11 @@ void setModelDirectory(const std::string& directory) {
     if (!model_directory.empty() && model_directory.back() == '/') {
         model_directory.pop_back();
     }
+}
+
+// Function to set debug mode
+void setDebugMode(bool debug) {
+    debug_mode = debug;
 }
 
 // Function to classify text and return severity score
@@ -44,15 +52,17 @@ double classifyText(const std::string& text, const std::string& model_dir) {
     // Classify the text
     auto result = classifier.classifyWord(text);
     
-    // Print individual category scores
-    std::cout << "Category Scores:" << std::endl;
-    std::cout << std::string(50, '-') << std::endl;
-    for (const auto& score : result.all_scores) {
-        std::cout << std::left << std::setw(30) << score.category 
-                  << "| Severity: " << std::fixed << std::setprecision(3) 
-                  << score.severity << " | Confidence: " << score.confidence << std::endl;
+    // Print individual category scores only in debug mode
+    if (debug_mode) {
+        std::cout << "Category Scores:" << std::endl;
+        std::cout << std::string(50, '-') << std::endl;
+        for (const auto& score : result.all_scores) {
+            std::cout << std::left << std::setw(30) << score.category 
+                      << "| Severity: " << std::fixed << std::setprecision(3) 
+                      << score.severity << " | Confidence: " << score.confidence << std::endl;
+        }
+        std::cout << std::string(50, '-') << std::endl;
     }
-    std::cout << std::string(50, '-') << std::endl;
     
     // Calculate weighted average severity from top 3 categories
     double total_weighted_severity = 0.0;

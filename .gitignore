@@ -103,3 +103,5 @@ datasets/
 # System files
 .DS_Store
 Thumbs.db 
+
+json.hpp

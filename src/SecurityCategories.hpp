@@ -388,22 +388,18 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
     }},
 
     {"Firewall", {
-        "network firewall", "network firewall issue", "network firewall error",
-        "network firewall alert", "network firewall warning", "network firewall failure",
-        "firewall", "firewall system", "firewall device", "firewall appliance",
         "packet filtering", "stateful inspection", "deep packet inspection",
-        "application layer gateway", "circuit level gateway", "proxy firewall",
-        "next generation firewall", "host based firewall", "perimeter firewall",
-        "firewall rule set", "firewall policy", "firewall zone", "dmz configuration",
-        "ingress filtering", "egress filtering", "port blocking", "protocol filtering",
-        "nat policy", "port forwarding", "firewall bypass attempt", "firewall evasion",
-        "rule violation", "acl violation", "firewall log", "rule base analysis",
-        "firewall cluster", "high availability setup", "failover configuration",
-        "firewall rule audit", "rule optimization", "security policy violation",
-        "traffic inspection", "application control", "url filtering",
-        "geo blocking", "ip blocking", "rate limiting", "connection tracking",
-        "session management", "firewall backdoor", "firewall misconfiguration",
-        "enterprise firewall", "corporate firewall", "edge firewall"
+        "application gateway", "circuit gateway", "proxy firewall",
+        "ngfw", "host firewall", "perimeter firewall",
+        "ruleset", "policy", "dmz", 
+        "ingress filter", "egress filter", "port block", "protocol filter",
+        "nat", "port forward", "bypass", "evasion",
+        "acl violation", "rule analysis",
+        "ha cluster", "failover", 
+        "rule audit", "optimization",
+        "traffic inspect", "app control", "url filter",
+        "geo block", "ip block", "rate limit", "connection track",
+        "session track", "backdoor", "misconfig"
     }},
 
     {"System Compromise", {

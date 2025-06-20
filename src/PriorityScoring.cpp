@@ -7,7 +7,7 @@ PriorityScoring::PriorityScoring(const PriorityConfig& config) : config(config) 
 
 double PriorityScoring::getGammaForRule(const json& rule) {
     std::string ruleType = rule["RuleType"].get<std::string>();
-    return (ruleType == "GenericRule") ? 1.2 : 1.0;
+    return (ruleType == "GenericRule") ? 1.1 : 1.0;
 }
 
 double PriorityScoring::calculateRulePriority(const json& rule, const json& commonProperties, const json& containers) {
@@ -25,26 +25,22 @@ double PriorityScoring::calculateRulePriority(const json& rule, const json& comm
         return 0.0;
     }
 
-    // Calculate the denominator sum (Σ(1/j^p))
-    double denominator_sum = 0.0;
-    for (size_t j = 1; j <= s_post.size(); ++j) {
-        denominator_sum += 1.0 / std::pow(j, config.p_exponent);
+    // Calculate the sum with position-based weighting and high severity bonus
+    double sum = 0.0;
+    for (size_t j = 0; j < s_post.size(); ++j) {
+        double delta = (s_post[j] > 0.9) ? 0.05 : 0.0;
+        double position_weight = 1.0 / std::pow(j + 1, config.p_exponent);
+        sum += (s_post[j] * (1.0 + delta)) * position_weight;
     }
 
-    // Calculate the numerator sum (Σ(S_post,j^r / j^p))
-    double numerator_sum = 0.0;
-    for (size_t j = 0; j < s_post.size(); ++j) {
-        double j_term = 1.0 / std::pow(j + 1, config.p_exponent);
-        double score_term = std::pow(s_post[j], config.r_exponent);
-        numerator_sum += score_term * j_term;
-    }
+    // Calculate average by dividing by n
+    double avg_score = sum / static_cast<double>(s_post.size());
 
     // Calculate final score using the Ri formula with rule-specific gamma
     double pre_term = config.w_pre / (n_pre + config.epsilon);
-    double score_term = numerator_sum / denominator_sum;
     double gamma = getGammaForRule(rule);
     
-    return pre_term * gamma * score_term;
+    return pre_term * gamma * avg_score;
 }
 
 int PriorityScoring::countPreconditions(const json& rule) {

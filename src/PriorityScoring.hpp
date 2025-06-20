@@ -10,15 +10,13 @@ using json = nlohmann::json;
 struct PriorityConfig {
     double w_pre;      // Weight for preconditions
     double epsilon;    // Small constant
-    double r_exponent; // r value for emphasizing high scores
-    double p_exponent; // p value for discounting
+    double p_exponent; // p value for position-based weighting
 
     // Default constructor with initial values
     PriorityConfig() :
         w_pre(1.5),
         epsilon(0.0001),
-        r_exponent(2.25),
-        p_exponent(0.7)
+        p_exponent(0.2)
     {}
 };
 
