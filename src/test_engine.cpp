@@ -10,7 +10,7 @@ int main() {
     
     // Test cases with different security-related terms
     std::vector<std::string> test_cases = {
-        "hasSsh",
+        "has ssh open",
         "DevOps security issue",
         "malware detected",
         "normal non-security text",
@@ -32,11 +32,6 @@ int main() {
         std::cout << "Text: \"" << text << "\"\n";
         std::cout << "Severity: " << std::fixed << std::setprecision(2) 
                   << (severity * 100) << "%";
-        
-        // Add severity level indicator
-        if (severity >= 0.8) std::cout << " (HIGH)";
-        else if (severity >= 0.6) std::cout << " (MEDIUM)";
-        else std::cout << " (LOW)";
         
         std::cout << "\n\n";
     }

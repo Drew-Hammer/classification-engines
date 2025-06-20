@@ -20,6 +20,8 @@ const std::map<std::string, double> CATEGORY_SEVERITY = {
     {"Attack", 0.80},
     {"Authentication", 0.80},
     {"Cryptography", 0.80},
+    {"Memory Manipulation", 0.75},
+    {"Firewall", 0.80},
     {"Lateral Movement", 0.80},     
     
     // SIGNIFICANT (0.65-0.74) - Major security component
@@ -30,8 +32,7 @@ const std::map<std::string, double> CATEGORY_SEVERITY = {
     {"DevOps Security", 0.65},
     {"Defense Evasion", 0.70},      
     {"Service Availability", 0.65},  
-    
-    // MEDIUM (0.55-0.64) - Important security concerns
+    {"Network Traffic Analysis", 0.60},
     {"Web Security", 0.61},          
     {"Zero Trust", 0.60},
     {"Storage Security", 0.55},
@@ -60,20 +61,6 @@ const std::map<std::string, double> CATEGORY_SEVERITY = {
 };
 
 const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
-    {"Data Security", {
-        "data breach", "data exfiltration", "data leak", "data theft",
-        "information disclosure", "sensitive data exposure", "data compromise",
-        "unauthorized data access", "confidential data", "sensitive information", 
-        "private data", "encrypted storage", "protected resource", "secure transmission",
-        "classified information", "restricted access", "secret management", "proprietary information", 
-        "data confidentiality", "data integrity", "data availability", "secure backup", 
-        "database security", "dataset protection", "record security", "pii protection", 
-        "phi security", "data leak", "security breach", "data tokenization", 
-        "data masking", "data pseudonymization", "data loss", "data exfiltration", 
-        "cloud storage security", "s3 security", "data integrity check", "data privacy control", 
-        "data retention policy", "data at rest", "data in transit"
-    }},
-
     {"Web Security", {
         "web application", "web app", "web vulnerability",
         "web app vulnerability", "application vulnerability",
@@ -256,7 +243,7 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
     }},
 
     {"Defense", {
-        "firewall", "encryption", "authentication", 
+        "encryption", "authentication", 
         "authorization", "patch", "update", "backup", 
         "monitoring", "threat detection", "intrusion", "protection", 
         "control", "hardening", "remediation", "patch", 
@@ -395,10 +382,28 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
     }},
 
     {"Web Application Firewall", {
-        "waf", "waf rule", "waf bypass",
-        "modsecurity", "signature rule", "payload filtering",
+        "signature rule", "payload filtering",
         "web protection", "application filtering", "sql injection blocking",
         "xss filtering", "http anomaly"
+    }},
+
+    {"Firewall", {
+        "network firewall", "network firewall issue", "network firewall error",
+        "network firewall alert", "network firewall warning", "network firewall failure",
+        "firewall", "firewall system", "firewall device", "firewall appliance",
+        "packet filtering", "stateful inspection", "deep packet inspection",
+        "application layer gateway", "circuit level gateway", "proxy firewall",
+        "next generation firewall", "host based firewall", "perimeter firewall",
+        "firewall rule set", "firewall policy", "firewall zone", "dmz configuration",
+        "ingress filtering", "egress filtering", "port blocking", "protocol filtering",
+        "nat policy", "port forwarding", "firewall bypass attempt", "firewall evasion",
+        "rule violation", "acl violation", "firewall log", "rule base analysis",
+        "firewall cluster", "high availability setup", "failover configuration",
+        "firewall rule audit", "rule optimization", "security policy violation",
+        "traffic inspection", "application control", "url filtering",
+        "geo blocking", "ip blocking", "rate limiting", "connection tracking",
+        "session management", "firewall backdoor", "firewall misconfiguration",
+        "enterprise firewall", "corporate firewall", "edge firewall"
     }},
 
     {"System Compromise", {
@@ -420,19 +425,6 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "lateral movement via compromised host", "privilege persistence established",
         "system level persistence achieved", "startup process compromised",
         "system recovery mechanism disabled", "security mechanism disabled"
-    }},
-
-    {"Defense Evasion", {
-        "monitoring bypass", "detection evasion", "security control bypass",
-        "defense circumvention", "security evasion", "monitoring evasion",
-        "stealth technique", "hidden access", "covert channel", "evasion technique",
-        "security tool bypass", "antivirus evasion", "ids evasion", "ips bypass",
-        "logging evasion", "audit evasion", "forensics evasion", "trace removal",
-        "evidence cleanup", "activity masking", "defense layer bypass",
-        "security product disable", "monitoring disable", "defense mechanism disable",
-        "security tool tampering", "defense system compromise", "security agent disable",
-        "detection system bypass", "security sensor blind", "defense layer penetration",
-        "security control disable", "monitoring system bypass", "security monitoring blind"
     }},
 
     {"Service Availability", {
@@ -465,6 +457,18 @@ const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
         "uptime impact", "availability loss", "service level",
         "performance degradation", "response time", "throughput reduction",
         "capacity impact", "bandwidth impact", "resource availability"
+    }},
+
+    {"Memory Manipulation", {
+        "buffer overflow", "stack overflow", "heap overflow", "segmentation fault",
+        "memory corruption", "use after free", "double free", "null pointer dereference",
+        "memory leak", "stack smashing", "heap spraying", "buffer overrun",
+        "memory address manipulation", "pointer manipulation", "stack buffer overflow",
+        "heap buffer overflow", "integer overflow", "format string vulnerability",
+        "memory allocation error", "dangling pointer", "wild pointer", "memory exhaustion",
+        "stack canary violation", "memory page violation", "memory protection bypass",
+        "buffer underflow", "array bounds violation", "memory alignment error",
+        "uninitialized memory use", "memory disclosure", "memory race condition"
     }}
 };
 

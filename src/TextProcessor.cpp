@@ -118,6 +118,7 @@ const std::map<std::string, std::string> TextProcessor::IRREGULAR_VERBS = {
 const std::set<std::string> TextProcessor::NEUTRAL_WORDS = {
     // Common but non-specific security terms
     "security",
+    "Network",
     "attack",
     "threat",
     "risk",
