@@ -14,9 +14,9 @@ struct PriorityConfig {
 
     // Default constructor with initial values
     PriorityConfig() :
-        w_pre(1.5),
+        w_pre(0.4316),
         epsilon(0.0001),
-        p_exponent(0.2)
+        p_exponent(0.5)
     {}
 };
 

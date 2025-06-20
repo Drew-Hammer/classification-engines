@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <numeric>
+#include <iostream>
 
 PriorityScoring::PriorityScoring(const PriorityConfig& config) : config(config) {}
 
@@ -11,36 +12,37 @@ double PriorityScoring::getGammaForRule(const json& rule) {
 }
 
 double PriorityScoring::calculateRulePriority(const json& rule, const json& commonProperties, const json& containers) {
-    // Get N_pre (number of preconditions)
-    int n_pre = countPreconditions(rule);
-    
     // Calculate S_post (vector of postcondition scores)
     std::vector<double> s_post = calculatePostconditionScores(rule, commonProperties, containers);
-    
-    // Sort postcondition scores in descending order
-    std::sort(s_post.begin(), s_post.end(), std::greater<double>());
     
     // If no postconditions, return 0
     if (s_post.empty()) {
         return 0.0;
     }
 
-    // Calculate the sum with position-based weighting and high severity bonus
+    //Sum function inside of Ri term
     double sum = 0.0;
-    for (size_t j = 0; j < s_post.size(); ++j) {
+    for (size_t j = 0; j < s_post.size(); j++) {
         double delta = (s_post[j] > 0.9) ? 0.05 : 0.0;
-        double position_weight = 1.0 / std::pow(j + 1, config.p_exponent);
+        double position_weight = 1.0 / std::pow(j + 1, config.p_exponent);  // j^p denominator
         sum += (s_post[j] * (1.0 + delta)) * position_weight;
     }
-
-    // Calculate average by dividing by n
     double avg_score = sum / static_cast<double>(s_post.size());
 
-    // Calculate final score using the Ri formula with rule-specific gamma
-    double pre_term = config.w_pre / (n_pre + config.epsilon);
-    double gamma = getGammaForRule(rule);
+    // Calculate precondition weight: 1 / (1 + W_pre * (N_pre - 1 + epsilon))
+    int n_pre = countPreconditions(rule);
+    double pre_weight = 1.0 / (1.0 + config.w_pre * (n_pre - 1 + config.epsilon));
     
-    return pre_term * gamma * avg_score;
+    // Apply gamma for generic boost factor
+    double gamma = getGammaForRule(rule);
+
+    // std::cout << "Average score: " << avg_score << std::endl;
+    // std::cout << "Precondition weight: " << pre_weight << std::endl;
+    // std::cout << "With precondition weight: " << pre_weight * avg_score << std::endl;
+    // std::cout << "With Gamma: " << pre_weight * gamma << std::endl;
+    // std::cout << "Final score: " << pre_weight * gamma * avg_score << std::endl;
+    
+    return pre_weight * gamma * avg_score;
 }
 
 int PriorityScoring::countPreconditions(const json& rule) {
@@ -106,22 +108,7 @@ std::vector<double> PriorityScoring::calculatePostconditionScores(const json& ru
         }
 
         if (!factName.empty()) {
-            // Create a more specific impact description based on the fact name
-            std::string impactStr;
-            if (factName.find("Log") != std::string::npos) {
-                impactStr = "audit log tampering: " + factName;
-            } else if (factName.find("Configuration") != std::string::npos) {
-                impactStr = "configuration change: " + factName;
-            } else if (factName.find("Root Access") != std::string::npos || 
-                      factName.find("Administrator") != std::string::npos) {
-                impactStr = "system compromise: " + factName;
-            } else if (factName.find("Data") != std::string::npos) {
-                impactStr = "data breach: " + factName;
-            } else {
-                impactStr = "impact: " + factName;
-            }
-            
-            double score = classifyText(impactStr, "models");
+            double score = classifyText(factName, "models");
             scores.push_back(score);
         }
     }
