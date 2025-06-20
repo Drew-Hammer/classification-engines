@@ -9,13 +9,11 @@ using json = nlohmann::json;
 
 struct PriorityConfig {
     double w_pre;      // Weight for preconditions
-    double epsilon;    // Small constant
     double p_exponent; // p value for position-based weighting
 
     // Default constructor with initial values
     PriorityConfig() :
-        w_pre(0.4316),
-        epsilon(0.0001),
+        w_pre(0.0625),  // Set to achieve desired slope from 1.15 to 0.6
         p_exponent(0.5)
     {}
 };

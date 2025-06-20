@@ -29,18 +29,18 @@ double PriorityScoring::calculateRulePriority(const json& rule, const json& comm
     }
     double avg_score = sum / static_cast<double>(s_post.size());
 
-    // Calculate precondition weight: 1 / (1 + W_pre * (N_pre - 1 + epsilon))
+    // Calculate precondition weight using new formula: max(0.6, 1.15 - w_pre * (n_pre - 1))
     int n_pre = countPreconditions(rule);
-    double pre_weight = 1.0 / (1.0 + config.w_pre * (n_pre - 1 + config.epsilon));
+    double pre_weight = std::max(0.6, 1.15 - config.w_pre * (n_pre - 1));
     
     // Apply gamma for generic boost factor
     double gamma = getGammaForRule(rule);
-
-    // std::cout << "Average score: " << avg_score << std::endl;
-    // std::cout << "Precondition weight: " << pre_weight << std::endl;
-    // std::cout << "With precondition weight: " << pre_weight * avg_score << std::endl;
-    // std::cout << "With Gamma: " << pre_weight * gamma << std::endl;
-    // std::cout << "Final score: " << pre_weight * gamma * avg_score << std::endl;
+    
+    std::cout << "Average score: " << avg_score << std::endl;
+    std::cout << "Precondition weight: " << pre_weight << std::endl;
+    std::cout << "With precondition weight: " << pre_weight * avg_score << std::endl;
+    std::cout << "With Gamma: " << pre_weight * gamma << std::endl;
+    std::cout << "Final score: " << pre_weight * gamma * avg_score << std::endl;
     
     return pre_weight * gamma * avg_score;
 }
