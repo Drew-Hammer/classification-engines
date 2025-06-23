@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <numeric>
 #include <iostream>
+#include <iomanip>
+#include <fstream>
 
 PriorityScoring::PriorityScoring(const PriorityConfig& config) : config(config) {}
 
@@ -37,11 +39,11 @@ double PriorityScoring::calculateRulePriority(const json& rule, const json& comm
     // Apply gamma for generic boost factor
     double gamma = getGammaForRule(rule);
     
-    std::cout << "Average score: " << avg_score << std::endl;
-    std::cout << "Precondition weight: " << pre_weight << std::endl;
-    std::cout << "With precondition weight: " << pre_weight * avg_score << std::endl;
-    std::cout << "With Gamma: " << pre_weight * gamma << std::endl;
-    std::cout << "Final score: " << pre_weight * gamma * avg_score << std::endl;
+    // std::cout << "Average score: " << avg_score << std::endl;
+    // std::cout << "Precondition weight: " << pre_weight << std::endl;
+    // std::cout << "With precondition weight: " << pre_weight * avg_score << std::endl;
+    // std::cout << "With Gamma: " << pre_weight * gamma << std::endl;
+    // std::cout << "Final score: " << pre_weight * gamma * avg_score << std::endl;
     
     return pre_weight * gamma * avg_score;
 }
