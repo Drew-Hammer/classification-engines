@@ -24,14 +24,15 @@ double PriorityScoring::calculateRulePriority(const json& rule, const json& comm
     double sum = 0.0;
     for (size_t j = 0; j < s_post.size(); j++) {
         double delta = (s_post[j] > 0.9) ? 0.05 : 0.0;
-        double position_weight = 1.0 / std::pow(j + 1, config.p_exponent);  // j^p denominator
+        double position_weight = 1.0 / std::pow(j + 1, config.p_exponent); 
+        // std::cout << "Position weight: " << position_weight << std::endl;
         sum += (s_post[j] * (1.0 + delta)) * position_weight;
     }
     double avg_score = sum / static_cast<double>(s_post.size());
 
     // Calculate precondition weight using new formula: max(0.6, 1.15 - w_pre * (n_pre - 1))
     int n_pre = countPreconditions(rule);
-    double pre_weight = std::max(0.6, 1.15 - config.w_pre * (n_pre - 1));
+    double pre_weight = std::max(0.6, 1.06 - config.w_pre * (n_pre - 1));
     
     // Apply gamma for generic boost factor
     double gamma = getGammaForRule(rule);

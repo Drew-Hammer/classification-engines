@@ -11,10 +11,9 @@ struct PriorityConfig {
     double w_pre;      // Weight for preconditions
     double p_exponent; // p value for position-based weighting
 
-    // Default constructor with initial values
     PriorityConfig() :
-        w_pre(0.0625),  // Set to achieve desired slope from 1.15 to 0.6
-        p_exponent(0.5)
+        w_pre(0.0335), 
+        p_exponent(0.45)
     {}
 };
 
