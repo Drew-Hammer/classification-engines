@@ -1,9 +1,10 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -I.
+CXXFLAGS = -std=c++17 -I. -Isrc
 
 # Source files
 SRCS = src/exposure_engine.cpp \
        src/ExposureClassifier.cpp \
+       src/TextProcessor.cpp \
        src/test_exposure_engine.cpp
 
 # Object files

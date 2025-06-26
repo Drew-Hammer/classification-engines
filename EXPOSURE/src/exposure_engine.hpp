@@ -1,37 +1,16 @@
-#pragma once
+#ifndef EXPOSURE_ENGINE_HPP
+#define EXPOSURE_ENGINE_HPP
 
 #include <string>
-#include <vector>
-#include <utility>
 
-namespace exposure {
+// Function to set model directory
+void setExposureModelDirectory(const std::string& directory);
 
-// Configuration struct for exposure classification
-struct ExposureConfig {
-    double internet_weight = 0.95;
-    double credential_weight = 0.90;
-    double data_weight = 0.90;
-    double network_weight = 0.80;
-    double api_weight = 0.80;
-    double cloud_weight = 0.75;
-    double container_weight = 0.75;
-    double service_weight = 0.70;
-    double config_weight = 0.65;
-    double infra_weight = 0.60;
-    double debug_weight = 0.55;
-    double internal_weight = 0.45;
-    double doc_weight = 0.35;
-};
+// Function to set debug mode
+void setExposureDebugMode(bool debug);
 
-// Main function to classify text and get exposure scores
-std::vector<std::pair<std::string, double>> classifyExposure(const std::string& text);
+// Function to classify text and return exposure score between 0 and 1
+// If model_dir is empty, uses the directory set by setExposureModelDirectory or falls back to "../models"
+double classifyExposure(const std::string& text, const std::string& model_dir = "");
 
-// Batch classification function
-std::vector<std::vector<std::pair<std::string, double>>> classifyExposureBatch(
-    const std::vector<std::string>& texts);
-
-// Process exposure scores from a JSON file
-bool processExposureScores(const std::string& inputPath, bool verbose = false, bool printResults = false);
-bool processExposureScores(const std::string& inputPath, const ExposureConfig& config, bool verbose = false, bool printResults = false);
-
-} // namespace exposure 
+#endif // EXPOSURE_ENGINE_HPP 
