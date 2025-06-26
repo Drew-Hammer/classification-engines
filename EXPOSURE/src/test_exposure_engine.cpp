@@ -28,8 +28,22 @@ int main() {
         if (!results.empty()) {
             std::cout << "Severity: " << std::fixed << std::setprecision(2) 
                       << (results[0].second * 100) << "%\n";
+            
+            std::cout << "Categories:\n";
+            for (const auto& [category, severity] : results) {
+                if (severity >= 0.85) {
+                    std::cout << "  CRITICAL: ";
+                } else if (severity >= 0.70) {
+                    std::cout << "  HIGH: ";
+                } else if (severity >= 0.50) {
+                    std::cout << "  MEDIUM: ";
+                } else {
+                    std::cout << "  LOW: ";
+                }
+                std::cout << category << " (" << (severity * 100) << "%)\n";
+            }
         } else {
-            std::cout << "Severity: 0.00%\n";
+            std::cout << "No exposure risks detected\n";
         }
         std::cout << "\n";
     }

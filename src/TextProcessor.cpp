@@ -4,11 +4,11 @@
 #include <cctype>
 #include <iostream>
 
-namespace common {
-
 const std::vector<std::string> TextProcessor::COMMON_SUFFIXES = {
-    "ing", "ed", "er", "tion", "able", "ible", "ment", "ness", "ity",
-    "al", "ic", "ive", "ous", "ful", "less", "ly", "y"
+    "ing", "tion", "sion", "ment", "ity", "ness", "able", "ible", "ize", "ise",
+    "ed", "ly", "ful", "less", "er", "or", "ive", "al", "ic", "ous",
+    "ation", "ization", "isation", "ifying", "ifying", "alist", "alism",
+    "ility", "arity", "ivity", "ingly", "ately", "atory", "ified"
 };
 
 // Define security-related abbreviations and their expansions
@@ -466,6 +466,4 @@ bool TextProcessor::isNeutralWord(const std::string& word) {
     // Check lemmatized form
     std::string lemma = lemmatize(normalized);
     return NEUTRAL_WORDS.find(lemma) != NEUTRAL_WORDS.end();
-}
-
-} // namespace common 
+} 
