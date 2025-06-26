@@ -1,14 +1,19 @@
 #include "Classifier.hpp"
 #include "SecurityCategories.hpp"
 #include "TextProcessor.hpp"
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
+#include <array>
+#include <sstream>
+#include <algorithm>
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <cmath>
-#include <algorithm>
 #include <queue>
 #include <map>
 
+using common::TextProcessor;
 using security::CATEGORY_KEYWORDS;
 using security::CATEGORY_SEVERITY;
 

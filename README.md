@@ -1,17 +1,22 @@
-# FastText-based String Classifier
+# FastText-based Security and Exposure Classifier
 
-This project implements a fast and efficient classification system that uses FastText vector embeddings to classify input strings based on similarity to reference examples.
+This project implements a fast and efficient classification system that uses FastText vector embeddings to classify input strings based on two aspects:
+1. Security Classification - Identifies security-related terms and their severity
+2. Exposure Classification - Identifies potential exposure risks and their severity
 
 ## Features
 
 - Uses FastText for generating vector embeddings
+- Dual classification system:
+  - Security classification for identifying security concerns
+  - Exposure classification for identifying data/system exposure risks
 - Local classification with pre-computed reference embeddings
 - Configurable similarity threshold
 - Support for top-k similar matches
 - Fast cosine similarity comparison
 - C++17 implementation for high performance
-- Security-focused classification with severity scoring
-- Extensive security term categorization
+- Comprehensive severity scoring for both security and exposure
+- Extensive term categorization
 
 ## Prerequisites
 
@@ -23,77 +28,49 @@ This project implements a fast and efficient classification system that uses Fas
 The project uses a Makefile for building and testing. Here are the available commands:
 
 ```bash
-# Build the classifier
-make
-
-# Run the tests
+# Build and test both classifiers
 make test
+
+# Test security classifier only
+make test_security
+
+# Test exposure classifier only
+make test_exposure
 
 # Clean build artifacts
 make clean
 ```
 
-Alternatively, you can build manually with:
-```bash
-g++ -std=c++17 src/test_engine.cpp src/classification_engine.cpp src/Classifier.cpp src/TextProcessor.cpp -o test_engine
-```
+## Classification Categories
 
-## Usage
-
-Before using the classifier, you'll need a pre-trained FastText model. You can either:
-1. Use an existing FastText model
-2. Train your own model using FastText's training tools
-
-### Running the Example
-
-The example program demonstrates how to use the classifier with sample security classifications:
-
-```bash
-./test_engine
-```
-
-### Using in Your Own Code
-
-```cpp
-#include "Classifier.hpp"
-
-// Initialize classifier
-Classifier classifier;
-classifier.initialize("path/to/model.bin");
-
-// Add reference strings and their labels
-classifier.addReference("example string", "example_label");
-
-// Pre-compute embeddings (do this after adding all references)
-classifier.computeReferenceEmbeddings();
-
-// Classify a string
-auto result = classifier.classify("input string");
-std::cout << "Label: " << result.label 
-          << ", Confidence: " << result.confidence << std::endl;
-
-// Get top-k matches
-auto topMatches = classifier.getTopKMatches("input string", 3);
-```
-
-## Security Categories
-
-The classifier includes comprehensive security categories with severity scoring:
-
-- CRITICAL (0.85-0.95): Immediate system compromise or data breach risks
+### Security Categories
+The security classifier includes comprehensive security categories with severity scoring:
+- CRITICAL (0.85-0.95): Immediate system compromise risks
 - HIGH (0.75-0.84): Direct security threats
 - SIGNIFICANT (0.65-0.74): Major security components
 - MEDIUM (0.55-0.64): Important security concerns
 
+### Exposure Categories
+The exposure classifier includes categories for identifying exposure risks:
+- CRITICAL (0.85-0.95): Direct exposure to internet/public
+  - Internet Exposure (0.95)
+  - Credential Exposure (0.90)
+  - Sensitive Data Exposure (0.90)
+- HIGH (0.70-0.84): Significant exposure surface
+  - Network Exposure (0.80)
+  - API Exposure (0.80)
+  - Cloud Resource Exposure (0.75)
+  - Container Exposure (0.75)
+  - Service Exposure (0.70)
+- MEDIUM (0.50-0.69): Limited exposure
+  - Configuration Exposure (0.65)
+  - Infrastructure Exposure (0.60)
+  - Debug Exposure (0.55)
+- LOW (0.30-0.49): Minimal exposure
+  - Internal Exposure (0.45)
+  - Documentation Exposure (0.35)
+
 Each category includes extensive keyword matching and context-aware classification.
-
-## Performance Considerations
-
-- Reference embeddings are pre-computed and cached for faster classification
-- Uses efficient cosine similarity calculation
-- Minimal memory allocations during classification
-- Thread-safe classification (after initialization)
-- Optimized text processing with camelCase word splitting
 
 ## Version Control Notes
 
@@ -113,19 +90,6 @@ The following are not included in version control:
 - Common Crawl files (cc.*)
 - Any crawl-related data (crawl.*)
 
-3. Sensitive Data
-- Configuration files with secrets
-- Private credentials
-- API keys
-- Certificates and keys
-- Environment files
-
-4. Large Datasets
-- Training data
-- Test datasets
-- Large JSON/CSV files
-- Custom word lists
-
 ### Required Setup After Cloning
 
 1. Model Setup
@@ -133,38 +97,18 @@ The following are not included in version control:
 # Create models directory
 mkdir -p models
 
-# Download required model (example)
-# Note: You'll need to obtain the appropriate model file
-# from your organization's secure storage
-cp /path/to/your/security_model.bin models/
+# Build the exposure model
+./lib/scripts/build_exposure_model.sh
+
+# Build the security model
+./lib/scripts/build_custom_security_model.sh
 ```
 
 2. Build and Test
 ```bash
-# Build the classifier
-make
-
-# Run the tests
+# Build and test both classifiers
 make test
 ```
-
-### Maintaining Clean Version Control
-
-1. Before Committing:
-- Check for sensitive data in code comments
-- Verify no model files are staged
-- Ensure configuration files are templates only
-- Remove any test datasets
-
-2. Adding New Files:
-- Update .gitignore if adding new file types
-- Document required files in README
-- Provide example/template files when needed
-
-3. Sharing Code:
-- Share model download instructions separately
-- Document any required credentials
-- Provide data format examples without real data
 
 For detailed technical documentation, see README_TECHNICAL.md
 For usage instructions, see README_USAGE.md 

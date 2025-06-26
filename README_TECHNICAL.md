@@ -1,26 +1,24 @@
-# Security Term Classifier - Technical Documentation
+# Security and Exposure Classification System - Technical Documentation
 
 ## Architecture Overview
-The Security Term Classifier is a C++ application that uses word embeddings and semantic similarity to classify security-related terms into predefined categories. It employs a multi-stage classification process with exact matching and similarity-based matching.
+The system consists of two main classifiers:
+1. Security Term Classifier - Identifies security-related terms and their severity
+2. Exposure Classifier - Identifies potential exposure risks and their severity
+
+Both classifiers use word embeddings and semantic similarity to classify input strings into predefined categories.
 
 ## Core Components
 
-### 1. Classifier Class
+### 1. Base Classifier Class
 The main engine that handles:
 - Word vector loading and management
 - Phrase tokenization and vector computation
 - Similarity calculations
 - Multi-category classification
 
-Key Data Structures:
+### 2. Security Classifier
+Inherits from base classifier and specializes in security classification:
 ```cpp
-struct CategoryScore {
-    std::string category;
-    float confidence;
-    float severity;
-    std::vector<std::pair<std::string, float>> matching_terms;
-};
-
 struct SecurityClassification {
     std::string category;
     float confidence;
@@ -30,157 +28,82 @@ struct SecurityClassification {
 };
 ```
 
-### 2. Security Categories
-Nine predefined security categories with assigned severity levels:
-```
-Vulnerability       (90%) - Direct security weaknesses
-Attack             (85%) - Active threats
-Incident Response  (80%) - Critical response needed
-Access Control     (75%) - Security controls
-Network Security   (70%) - Network protections
-Data Security      (70%) - Data protection
-Defense            (65%) - Security measures
-Infrastructure     (60%) - System-level concerns
-Compliance         (50%) - Policy and regulation
+### 3. Exposure Classifier
+Specializes in exposure risk classification:
+```cpp
+class ExposureClassifier {
+    std::vector<std::pair<std::string, double>> classify(const std::string& text);
+    double getCategorySeverity(const std::string& category) const;
+};
 ```
 
-Category Implementation:
+### 4. Categories
+
+#### Security Categories
+Nine predefined security categories with severity levels:
 ```cpp
-const std::map<std::string, float> CATEGORY_SEVERITY = {
+const std::map<std::string, float> SECURITY_SEVERITY = {
     {"Vulnerability", 0.9f},
     {"Attack", 0.85f},
     // ... other categories
 };
+```
 
-const std::map<std::string, std::vector<std::string>> CATEGORY_KEYWORDS = {
-    {"Vulnerability", {"vulnerability", "zero-day", "exploit", ...}},
-    {"Attack", {"malware", "ransomware", "phishing", ...}},
-    // ... other categories
+#### Exposure Categories
+Thirteen predefined exposure categories with severity levels:
+```cpp
+const std::map<std::string, double> CATEGORY_SEVERITY = {
+    {"Internet Exposure", 0.95},
+    {"Credential Exposure", 0.90},
+    {"Sensitive Data Exposure", 0.90},
+    {"Network Exposure", 0.80},
+    {"API Exposure", 0.80},
+    {"Cloud Resource Exposure", 0.75},
+    {"Container Exposure", 0.75},
+    {"Service Exposure", 0.70},
+    {"Configuration Exposure", 0.65},
+    {"Infrastructure Exposure", 0.60},
+    {"Debug Exposure", 0.55},
+    {"Internal Exposure", 0.45},
+    {"Documentation Exposure", 0.35}
 };
 ```
 
-### 3. Text Processing
+### 5. Text Processing
+Common text processing utilities used by both classifiers:
 - Word splitting and normalization
 - N-gram generation for multi-word terms
 - Abbreviation handling
 - Case-insensitive matching
 
-Text Processing Features:
-- Handles compound words (e.g., "cybersecurity")
-- Processes multi-word phrases (e.g., "zero trust security")
-- Recognizes common security abbreviations (e.g., "CSRF", "2FA")
-- Supports hyphenated terms (e.g., "zero-day")
-
 ## Classification Process
 
-### Phase 1: Exact Matching
+### Security Classification
 1. Input phrase is tokenized and normalized
-2. System checks for exact matches in category keywords
-3. If found, assigns 100% confidence and category's predefined severity
+2. System checks for exact matches in security keywords
+3. If no exact match, performs similarity matching
+4. Returns classification with confidence and severity scores
 
-Implementation Details:
-```cpp
-// Tokenization
-std::vector<std::string> splitPhrase(const std::string& phrase);
-
-// Vector computation
-std::vector<float> getWordVector(const std::string& word);
-std::vector<float> getPhraseVector(const std::string& phrase);
-
-// Similarity calculation
-float getSimilarity(const std::string& word1, const std::string& word2);
-```
-
-### Phase 2: Similarity Matching
-If no exact match is found:
-1. Computes word vectors for input phrase
-2. Calculates cosine similarity with category keywords
-3. Identifies matches above threshold (default: 0.45)
-4. Assigns highest confidence score and corresponding severity
-
-Similarity Calculation:
-```cpp
-float similarity = dotProduct / (norm1 * norm2);
-if (similarity > threshold) {
-    // Update category scores
-    category_scores[category].confidence = max(
-        category_scores[category].confidence,
-        similarity
-    );
-}
-```
-
-### Scoring System
-- Confidence Score (0-100%): How well the term matches category keywords
-- Severity Score (0-100%): Predefined per category based on security impact
-- Similar Terms: Top 3 most similar terms found during classification
-
-Score Normalization:
-- Confidence scores are normalized to [0,1] range
-- Severity scores are predefined constants
-- Similar terms are sorted by similarity score
-
-## Implementation Details
-
-### Vector Operations
-- Uses cosine similarity for semantic matching
-- Handles multi-word phrases through vector averaging
-- Normalizes vectors for consistent comparison
-
-Vector Math:
-```cpp
-// Cosine similarity calculation
-float dotProduct = 0.0f;
-float norm1 = 0.0f;
-float norm2 = 0.0f;
-
-for (size_t i = 0; i < dimension_; i++) {
-    dotProduct += vec1[i] * vec2[i];
-    norm1 += vec1[i] * vec1[i];
-    norm2 += vec2[i] * vec2[i];
-}
-
-return dotProduct / (sqrt(norm1) * sqrt(norm2));
-```
-
-### Performance Optimizations
-- Subset model loading for reduced memory usage
-- Early exit on exact matches
-- Efficient vector operations
-- Smart phrase tokenization
-
-Memory Management:
-- Uses unordered_map for O(1) word vector lookups
-- Preallocates vectors to avoid reallocations
-- Employs move semantics for vector operations
-- Uses references to avoid unnecessary copies
-
-### Error Handling
-- Graceful handling of unknown terms
-- Fallback to similarity matching when exact match fails
-- Proper memory management for large vector operations
-
-Error Cases:
-- Missing model file
-- Invalid word vectors
-- Unknown terms
-- Memory allocation failures
-- File I/O errors
+### Exposure Classification
+1. Input phrase is tokenized and normalized
+2. FastText model predicts exposure category
+3. System looks up predefined severity for the category
+4. Returns category and severity score
 
 ## File Structure
 ```
 src/
-├── Classifier.hpp     - Main classifier interface
-├── Classifier.cpp     - Core classification logic
-├── SecurityCategories.hpp - Category definitions
-├── TextProcessor.cpp  - Text handling utilities
-└── test_classifier.cpp - Simple test interface
+├── Classifier.hpp/.cpp        - Base classifier implementation
+├── SecurityClassifier.hpp     - Security classifier interface
+├── ExposureClassifier.hpp/.cpp - Exposure classifier implementation
+├── SecurityCategories.hpp     - Security category definitions
+├── ExposureCategories.hpp    - Exposure category definitions
+├── TextProcessor.hpp/.cpp     - Common text processing utilities
+├── test_engine.cpp           - Security classifier tests
+└── test_exposure_engine.cpp  - Exposure classifier tests
 ```
 
-Key Dependencies:
-- C++17 Standard Library
-- FastText word embeddings
-- Standard Template Library (STL)
+For usage instructions, see README_USAGE.md
 
 ## Model Requirements
 The classifier expects a binary model file containing word vectors in the following format:

@@ -1,10 +1,11 @@
-#ifndef TEXT_PROCESSOR_HPP
-#define TEXT_PROCESSOR_HPP
+#pragma once
 
 #include <string>
 #include <vector>
 #include <set>
 #include <map>
+
+namespace common {
 
 class TextProcessor {
 public:
@@ -61,4 +62,4 @@ private:
     static bool startsWith(const std::string& word, const std::string& prefix);
 };
 
-#endif // TEXT_PROCESSOR_HPP 
+} // namespace common 
